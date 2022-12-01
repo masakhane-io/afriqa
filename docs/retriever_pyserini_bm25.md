@@ -1,4 +1,4 @@
-# Retriever Baselines on Pyserini
+# Retriever Baselines (BM25) on Pyserini
 
 This page contains information on how to run BM25 retrieval baselines on {{Data}} using the [Pyserini](https://github.com/castorini/pyserini) Information Retrieval toolkit. Pyserini is built on the popular Lucene search library.
 
