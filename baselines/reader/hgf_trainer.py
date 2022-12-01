@@ -2,13 +2,10 @@ import math
 import time
 from typing import Dict, List, Optional
 
+from torch.utils.data import Dataset
+
 from transformers import Trainer, Seq2SeqTrainer, is_torch_tpu_available
 from transformers.trainer_utils import PredictionOutput, speed_metrics
-
-
-if is_torch_tpu_available(check_device=False):
-    import torch_xla.core.xla_model as xm
-    import torch_xla.debug.metrics as met
 
 
 class QuestionAnsweringTrainer(Trainer):
