@@ -197,8 +197,6 @@ class DataTrainingArguments:
                 assert extension in ["csv", "json"], "`test_file` should be a csv or a json file."
 
 
-def compute_metrics(p: EvalPrediction):
-        return metric.compute(predictions=p.predictions, references=p.label_ids)
 
 def main():
     # See all possible arguments in src/transformers/training_args.py
@@ -583,6 +581,9 @@ def main():
         return EvalPrediction(predictions=formatted_predictions, label_ids=references)
 
     metric = evaluate.load("squad_v2" if data_args.version_2_with_negative else "squad")
+
+    def compute_metrics(p: EvalPrediction):
+        return metric.compute(predictions=p.predictions, references=p.label_ids)
 
     # Initialize our Trainer
     trainer = QuestionAnsweringTrainer(

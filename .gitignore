@@ -133,3 +133,4 @@ models/
 runs/
 indexes/
 wandb/
+*.out
