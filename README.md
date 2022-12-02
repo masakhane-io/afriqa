@@ -1,1 +1,1 @@
-# african_qa
+# Cross-lingual Question Answering for African Languages
