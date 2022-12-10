@@ -134,3 +134,4 @@ runs/
 indexes/
 wandb/
 *.out
+dumps/
