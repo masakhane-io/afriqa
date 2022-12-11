@@ -63,7 +63,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='generate .tsv files for wiki corpuses of passages without tables and lists')
     parser.add_argument('--db_path', type=str, required=True, help='path to .db file containing preprocessed wiki pages from DrQA')
     parser.add_argument('--lang', type=str, required=True, help='')
-    parser.add_argument('--output_path_100w', type=str, default="dumps/wiki_100w.tsv", help='path to write .tsv with 100 word splits')
+    parser.add_argument('--output_path_100w', type=str, help='path to write .tsv with 100 word splits')
     args = parser.parse_args()
 
     sqliteConnection = sqlite3.connect(args.db_path)
@@ -162,7 +162,9 @@ if __name__ == '__main__':
         text = re.sub('&lt;ref&gt;.*?&lt;/ref&gt;', ' ', text)
         text = re.sub('&lt;.*?&gt;', ' ', text)
         text = re.sub('File:[A-Za-z0-9 ]+\.[a-z]{3,4}(\|[0-9]+px)?', '', text)
-        text = re.sub('Source: \[.*?\]', '', text)     
+        text = re.sub('Source: \[.*?\]', '', text)
+        text = re.sub('Source: \[.*?\]', '', text)
+        text = re.sub(r'(\bSection::::\b)', "", text)
         text = text.replace("Country flag|", "country:")
         text = text.replace("flag|", "country:")
         text = text.replace("flagicon|", "country:")
@@ -172,7 +174,7 @@ if __name__ == '__main__':
         text = text.replace("display=it", "")
         text = text.replace("abbr=on", "")
         text = text.replace("disp=table", "")
-         
+        text = re.sub(' +', ' ',text)
         texts.append(Text(text, metadata={"docid":make_wiki_id(document, 0)}))
 
         document = document.replace("\n", " ").replace("\t", " ")

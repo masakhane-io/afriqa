@@ -1,17 +1,21 @@
-import unicodedata
-import jsonlines
 import re
-from urllib.parse import unquote
+import os
 import regex
+import logging
+import jsonlines
+import unicodedata
 import numpy as np
 import pandas as pd
 import scipy.sparse as sp
+
+from tqdm import tqdm
+from urllib.parse import unquote
 from sklearn.utils import murmurhash3_32
 
 from datasets import load_dataset, Dataset
 from datasets.utils.py_utils import convert_file_size_to_int
 
-import logging
+
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
                     datefmt='%m/%d/%Y %H:%M:%S',
                     level=logging.INFO)
@@ -274,7 +278,8 @@ def shard_tsv_data(tsv_file_path: str, output_path: str, shard_size: str="1GB"):
     """
     """
     dataset = Dataset.from_pandas(pd.read_csv(tsv_file_path, sep="\t"))
-    dataset = dataset.map(lambda _, ix: {"id": ix}, with_indices=True)
+    dataset = dataset.rename_column("id", "docid")
+    dataset = dataset.map(lambda _, ix: {"docid": ix}, with_indices=True)
 
     max_shard_size = convert_file_size_to_int(shard_size) 
     dataset_nbytes = dataset.data.nbytes

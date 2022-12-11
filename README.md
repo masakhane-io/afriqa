@@ -1,6 +1,29 @@
 # Cross-lingual Question Answering for African Languages
 
 
+## Environment and Repository Setup
+
+- Set up a virtual environment using Conda or Virtualenv or
+
+    ```bash
+    conda create -n xor_qa_venv python=3.9 anaconda
+    conda activate xor_qa_venv
+    ```
+    or
+    ```bash
+    python3 -m venv xor_qa_venv
+    source xor_qa_venv/bin/activate
+    ```
+- Clone the repo
+
+    ```bash
+    git clone https://github.com/ToluClassics/masakhane_xqa --recurse-submodules
+    ```
+- Install Requirements
+
+    ```bash
+    pip install -r requirements.txt
+    ```
 ## Source Data
 
 The English and French passages for this project are drawn from Wikipedia snapshots of 2022-05-01 and 2022-04-20 respectively, and are downloaded from the [Internet Archive](https://archive.org/) to enable open-domain experiments.
@@ -9,15 +32,15 @@ The raw documents can be downloaded from the following URLS:
 - https://archive.org/download/enwiki-20220501/enwiki-20220501-pages-articles-multistream.xml.bz2
 - https://archive.org/download/frwiki-20220420/frwiki-20220420-pages-articles-multistream.xml.bz2
 
-
 ## Processing dumps
 
-For processing, we extract the Wikipedia articles into multiple jsonlines file, The articles are then preprocessed, cleaned and stored in a SQLite database file after they are Chunked into 100 token long passages. 
+For processing, we extract the Wikipedia articles into multiple jsonlines file, The articles are then preprocessed, cleaned and stored in a SQLite database file after which they are chunked into 100 token long passages.
+The processing pipeline adopted here is same as described in Section 4.1 of the [Dense Passage Retriever Paper](https://arxiv.org/pdf/2004.04906.pdf).
 
-The processing pipeline has been bundled into this [script](scripts/generate_process_dumps.sh). You can run using the code provided below:
+The pipeline has been bundled into this [script](scripts/download_process_dumps.sh). You can run using the code provided below:
 
 ```terminal
-bash scripts/generate_process_dumps.sh /path/to/wiki_dir
+bash scripts/generate_process_dumps.sh /path/to/dir_containing_dumps
 ```
 
 Here is a step by step break down of the different steps in the processing pipeline for English:
@@ -25,7 +48,7 @@ Here is a step by step break down of the different steps in the processing pipel
 1. Download the dumps into a specified file:
 
     ```terminal
-    wget https://archive.org/download/enwiki-20220501/enwiki-20220501-pages-articles-multistream.xml.bz2 -P /path/to/wiki_dir
+    wget https://archive.org/download/enwiki-20220501/enwiki-20220501-pages-articles-multistream.xml.bz2 -P /path/to/dir
     ```
 
 2. Use Wikiextractor (it is bundled into these repo as a submodule) to extract the Wikipedia articles into multiple Jsonlines 
@@ -46,7 +69,7 @@ Here is a step by step break down of the different steps in the processing pipel
 4. Chunk the articles in the database into 100 token long sequences/passages to improve answer extraction
 
     ```terminal
-    python3 preprocess/retriever/wikipedia_generate_context_tsv.py --db_path /path/to/db/enwiki-20220501.db --output_path_100w  /path/to/tsv/enwiki-20220501.tsv
+    python3 preprocess/retriever/wikipedia_generate_context_tsv.py --db_path /path/to/db/enwiki-20220501.db --output_path_100w  /path/to/tsv/enwiki-20220501.tsv --lang en
     ```
 
 5. (Optional) Shard the data into multiple `jsonl` files to make indexing easy
@@ -57,6 +80,16 @@ Here is a step by step break down of the different steps in the processing pipel
     ```
 
     This produces multiple jsonl files of size 1GB each
+
+    To view the processed files:
+
+    ```
+    head -1 /path/to/jsonl_shards/docs-000.jsonl
+    ```
+    Output:
+    ```
+    {"docid":809223,"text":" The hockey rink's dimensions are × , ...", "title": "Bolshoy Ice Dome"}
+    ```
 
 ## Retriever
 
