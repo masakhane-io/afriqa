@@ -51,7 +51,7 @@ Here is a step by step break down of the different steps in the processing pipel
     wget https://archive.org/download/enwiki-20220501/enwiki-20220501-pages-articles-multistream.xml.bz2 -P /path/to/dir
     ```
 
-2. Use Wikiextractor (it is bundled into these repo as a submodule) to extract the Wikipedia articles into multiple Jsonlines 
+2. Use Wikiextractor (bundled into this repo as a submodule) to extract the Wikipedia articles into multiple Jsonlines 
 
     ```terminal
     git clone https://github.com/attardi/wikiextractor.git

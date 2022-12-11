@@ -21,8 +21,7 @@ do
     bz_name="${lang}wiki-${date}-pages-articles-multistream.xml.bz2"
 	bz_fn="${wiki_dir}/${bz_name}"
 
-    wiki_json="${wiki_dir}/${lang}wiki-${date}-json"
-
+	wiki_json="${wiki_dir}/${lang}wiki-${date}-json"
 	mkdir -p ${wiki_json}
 
     if [ ! -f ${wiki_json} ]; then
@@ -38,7 +37,6 @@ do
 
 	# Create sqlite database containing article text and titles
 	python3 preprocess/retriever/build_db.py ${wiki_json} ${wiki_dir}/${lang}wiki-${date}.db
-
 	# Generate DPR 100 words context file
 	python3 preprocess/retriever/wikipedia_generate_context_tsv.py --db_path ${wiki_dir}/${lang}wiki-${date}.db --output_path_100w  ${wiki_dir}/${lang}wiki-${date}.tsv --lang ${lang}
 
