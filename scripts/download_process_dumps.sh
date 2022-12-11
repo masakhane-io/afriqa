@@ -18,18 +18,18 @@ do
 		date="20220420"
 	fi
 
-    bz_name="${lang}wiki-${date}-pages-articles-multistream.xml.bz2"
+    	bz_name="${lang}wiki-${date}-pages-articles-multistream.xml.bz2"
 	bz_fn="${wiki_dir}/${bz_name}"
 
 	wiki_json="${wiki_dir}/${lang}wiki-${date}-json"
 	mkdir -p ${wiki_json}
 
-    if [ ! -f ${wiki_json} ]; then
+    	if [ ! -f ${wiki_json} ]; then
 		echo "preparing ${wiki_json}"
 
-        if [ ! -f $bz_fn ]; then
-            wget "https://archive.org/download/${lang}wiki-${date}/${bz_name}" -P ${wiki_dir}
-        fi
+		if [ ! -f $bz_fn ]; then
+		    wget "https://archive.org/download/${lang}wiki-${date}/${bz_name}" -P ${wiki_dir}
+		fi
 
 		# Extract downloaded wikipedia dumps into jsonlines 
 		python3 wikiextractor/WikiExtractor.py ${wiki_dir}/${lang}wiki-${date}-pages-articles-multistream.xml.bz2 --filter_disambig_pages --json -o ${wiki_json} -s
