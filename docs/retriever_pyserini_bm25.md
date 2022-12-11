@@ -61,7 +61,7 @@ hits = searcher.search(query, k=num_hits)
 
 for i in range(len(hits)):
     print(f'{i+1:2} {hits[i].docid:4} {hits[i].score:.5f}')
-    print(f"\tcontents: {json.loads(hits[i].raw)["contents"]}")
+    print(f"\tcontents: {json.loads(hits[i].raw)['contents']}")
     print("==============================================")
 ```
 

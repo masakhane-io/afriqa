@@ -1,0 +1,4 @@
+datasets==2.7.1
+spacy==3.3.0
+pyserini==0.18.0
+transformers==4.24.0

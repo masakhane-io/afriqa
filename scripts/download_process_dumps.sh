@@ -1,6 +1,5 @@
-# Adapted and modified from https://github.com/crystina-z/mrtydi
-
 python3 -m spacy download en_core_web_lg
+python3 -m spacy download fr_core_news_lg
 
 wiki_dir=$1
 if [ -z $wiki_dir ]; then
@@ -41,6 +40,6 @@ do
 	python3 preprocess/retriever/build_db.py ${wiki_json} ${wiki_dir}/${lang}wiki-${date}.db
 
 	# Generate DPR 100 words context file
-	python3 preprocess/retriever/wikipedia_generate_context_tsv.py --db_path ${wiki_dir}/${lang}wiki-${date}.db --output_path_100w  ${wiki_dir}/${lang}wiki-${date}.tsv
+	python3 preprocess/retriever/wikipedia_generate_context_tsv.py --db_path ${wiki_dir}/${lang}wiki-${date}.db --output_path_100w  ${wiki_dir}/${lang}wiki-${date}.tsv --lang ${lang}
 
 done
