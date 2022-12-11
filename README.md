@@ -24,37 +24,39 @@ Here is a step by step break down of the different steps in the processing pipel
 
 1. Download the dumps into a specified file:
 
-```terminal
-wget https://archive.org/download/enwiki-20220501/enwiki-20220501-pages-articles-multistream.xml.bz2 -P /path/to/wiki_dir
-```
+    ```terminal
+    wget https://archive.org/download/enwiki-20220501/enwiki-20220501-pages-articles-multistream.xml.bz2 -P /path/to/wiki_dir
+    ```
 
 2. Use Wikiextractor (it is bundled into these repo as a submodule) to extract the Wikipedia articles into multiple Jsonlines 
 
-```terminal
-git clone https://github.com/attardi/wikiextractor.git
-cd wikiextractor && git checkout e4abb4cbd01
+    ```terminal
+    git clone https://github.com/attardi/wikiextractor.git
+    cd wikiextractor && git checkout e4abb4cbd01
 
-python3 WikiExtractor.py /path/to/your/enwiki-20220501-pages-articles-multistream.xml.bz2 --filter_disambig_pages --json -o /path/to/output/directory -s
-```
+    python3 WikiExtractor.py /path/to/your/enwiki-20220501-pages-articles-multistream.xml.bz2 --filter_disambig_pages --json -o /path/to/output/directory -s
+    ```
 
 3. Store data into SQLite database
 
-```terminal
-python3 process/retriever/build_db.py /path/to/preprocessed/data/dir /path/to/db/enwiki-20220501.db
-```
+    ```terminal
+    python3 process/retriever/build_db.py /path/to/preprocessed/data/dir /path/to/db/enwiki-20220501.db
+    ```
 
 4. Chunk the articles in the database into 100 token long sequences/passages to improve answer extraction
 
-```
-python3 preprocess/retriever/wikipedia_generate_context_tsv.py --db_path /path/to/db/enwiki-20220501.db --output_path_100w  /path/to/tsv/enwiki-20220501.tsv
-```
+    ```terminal
+    python3 preprocess/retriever/wikipedia_generate_context_tsv.py --db_path /path/to/db/enwiki-20220501.db --output_path_100w  /path/to/tsv/enwiki-20220501.tsv
+    ```
 
 5. (Optional) Shard the data into multiple `jsonl` files to make indexing easy
 
-```
-from utils import shard_tsv_data
-shard_tsv_data(tsv_file_path="/path/to/tsv/enwiki-20220501.tsv", output_file_path="/path/to/jsonl_shards", shard_size="1GB")
-```
+    ```python3
+    from utils import shard_tsv_data
+    shard_tsv_data(tsv_file_path="/path/to/tsv/enwiki-20220501.tsv", output_file_path="/path/to/jsonl_shards", shard_size="1GB")
+    ```
+
+    This produces multiple jsonl files of size 1GB each
 
 ## Retriever
 

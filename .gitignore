@@ -135,3 +135,4 @@ indexes/
 wandb/
 *.out
 dumps/
+collections/
