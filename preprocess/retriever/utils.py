@@ -4,8 +4,12 @@ import re
 from urllib.parse import unquote
 import regex
 import numpy as np
+import pandas as pd
 import scipy.sparse as sp
 from sklearn.utils import murmurhash3_32
+
+from datasets import load_dataset, Dataset
+from datasets.utils.py_utils import convert_file_size_to_int
 
 import logging
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
@@ -261,3 +265,24 @@ def prune_top_k_paragraphs(question_text, paragraphs, tfidf_vectorizer, pruning_
         para_title_text_pairs_pruned[para_titles[idx]] = para_text[idx]
 
     return para_title_text_pairs_pruned
+
+
+# ------------------------------------------------------------------------------
+# Data Sharding
+# ------------------------------------------------------------------------------
+def shard_tsv_data(tsv_file_path: str, output_path: str, shard_size: str="1GB"):
+    """
+    """
+    dataset = Dataset.from_pandas(pd.read_csv(tsv_file_path, sep="\t"))
+    dataset = dataset.map(lambda _, ix: {"id": ix}, with_indices=True)
+
+    max_shard_size = convert_file_size_to_int(shard_size) 
+    dataset_nbytes = dataset.data.nbytes
+    num_shards = int(dataset_nbytes / max_shard_size) + 1
+    num_shards = max(num_shards, 1)
+
+    print(f"Sharding into {num_shards} JSONL files.")
+    os.makedirs(output_path, exist_ok=True)
+    for shard_index in tqdm(range(num_shards)):
+        shard = dataset.shard(num_shards=num_shards, index=shard_index, contiguous=True)
+        shard.to_json(f"{output_path}/docs-{shard_index:03d}.jsonl", orient="records", lines=True)
