@@ -263,7 +263,6 @@ def prune_top_k_paragraphs(question_text, paragraphs, tfidf_vectorizer, pruning_
     top_tfidf_para_indices = tfidf_vectorizer.prune(
         question_text, para_text)[:pruning_l]
     para_title_text_pairs_pruned = {}
-
     # store the selected paras into dictionary.
     for idx in top_tfidf_para_indices:
         para_title_text_pairs_pruned[para_titles[idx]] = para_text[idx]
