@@ -5,7 +5,7 @@ This document contains information on how to convert downloaded XML wikipedia du
 For processing, we extract the Wikipedia articles into multiple jsonlines file, The articles are then preprocessed, cleaned and stored in a SQLite database file after which they are chunked into 100 token long passages.
 The processing pipeline adopted here is same as described in Section 4.1 of the [Dense Passage Retriever Paper](https://arxiv.org/pdf/2004.04906.pdf).
 
-The pipeline has been bundled into this [script](scripts/download_process_dumps.sh). You can run using the code provided below:
+The pipeline has been bundled into this [script](../scripts/download_process_dumps.sh). You can run using the code provided below:
 
 ```terminal
 bash scripts/generate_process_dumps.sh /path/to/dir_containing_dumps
