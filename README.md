@@ -34,7 +34,7 @@ The raw documents can be downloaded from the following URLS:
 
 ## Processing dumps
 
-The already processed dumps are available on HuggingFace, It is recommended to use this exact corpora to be able to reproduce the baseline results.
+The already processed dumps are available on HuggingFace 😊, It is recommended to use this exact corpora to be able to reproduce the baseline results.
 To download:
 
 - [English](https://huggingface.co/datasets/ToluClassics/masakhane_wiki_100/resolve/main/masakhane_wiki_100-english/corpus.jsonl)
