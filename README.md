@@ -34,9 +34,15 @@ The raw documents can be downloaded from the following URLS:
 
 ## Processing dumps
 
-We adopt the same processing used in the [Dense Passage Retriever Paper](https://arxiv.org/pdf/2004.04906.pdf).
+The already processed dumps are available on HuggingFace, It is recommended to use this exact corpora to be able to reproduce the baseline results.
+To download:
 
-The processing pipeline has been bundled into this [script](scripts/download_process_dumps.sh). You can run using the code provided below:
+- [English](https://huggingface.co/datasets/ToluClassics/masakhane_wiki_100/resolve/main/masakhane_wiki_100-english/corpus.jsonl)
+- [French](https://huggingface.co/datasets/ToluClassics/masakhane_wiki_100/resolve/main/masakhane_wiki_100-french/corpus.jsonl)
+
+
+However, to run the processing pipeline yourself; We adopt the same processing used in the [Dense Passage Retriever Paper](https://arxiv.org/pdf/2004.04906.pdf).
+The pipeline has been bundled into this [script](scripts/download_process_dumps.sh). You can run using the code provided below:
 
 ```terminal
 bash scripts/generate_process_dumps.sh /path/to/dir_containing_dumps
