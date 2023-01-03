@@ -5,16 +5,16 @@ import pandas as pd
 from tqdm import tqdm
 
 TARGET_LANG={
-    "bemba" : "english", 
-    "fon" : "english", 
-    "hausa" : "english", 
-    "igbo" : "english", 
-    "kinyarwanda" : "english", 
-    "twi" : "english", 
-    "yoruba" : "english", 
-    "swahili" : "english", 
-    "wolof" : "english", 
-    "zulu" : "english"
+    "bem" : "en", 
+    "fon" : "en", 
+    "hau" : "en", 
+    "ibo" : "en", 
+    "kin" : "en", 
+    "twi" : "en", 
+    "yor" : "en", 
+    "swa" : "en", 
+    "wol" : "en", 
+    "zul" : "en"
 }
 
 
@@ -33,7 +33,7 @@ def get_parser() -> argparse.ArgumentParser:
         type=str,
         required=True,
         help="language",
-        choices=["bemba", "fon", "hausa", "igbo", "kinyarwanda", "twi", "yoruba", "swahili", "wolof", "zulu"]
+        choices=["bem", "fon", "hau", "ibo", "kin", "twi", "yor", "swa", "wol", "zul"]
     )
     parser.add_argument(
         "--output_dir", type=str, required=True, help="path to store output processed file"
