@@ -1,5 +1,6 @@
 """
 Script is based on this package: https://github.com/nidhaloff/deep-translator/tree/a694c92b6741fc9c3200835b64be2fd910cd761b
+How to use: python tranlation_script/translate_queries.py --questions_file_path=tranlation_script/test.csv --source=hausa --pivot=english --output_file_path=tranlation_script/twi_translated.csv
 """
 
 import os
