@@ -1,4 +1,4 @@
-# Retriever Baselines (BM25) on Pyserini
+# Retriever Baselines (BM25) on Pyserini 🦆
 
 This page contains information on how to run BM25 retrieval baselines on {{Data}} using the [Pyserini](https://github.com/castorini/pyserini) Information Retrieval toolkit. Pyserini is built on the popular Lucene search library.
 
@@ -76,7 +76,7 @@ you should get something like this::
    contents: ...
 ```
 
-# Batch Retrieval Run and Evaluation
+# Batch Retrieval Run and Evaluation ⌛️
 
 To Evaluate BM25 retriever accuracy over a set of question pairs for a particular language, you can run this [script](scripts/retriever_pyserini_bm25.sh) as shown below by passing the `iso-3 language code` and `translation` type as arguments;
 
