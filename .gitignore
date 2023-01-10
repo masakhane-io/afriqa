@@ -136,3 +136,5 @@ wandb/
 dumps/
 collections/
 queries/
+tranlation_script/twi_translated.csv
+tranlation_script/test.csv

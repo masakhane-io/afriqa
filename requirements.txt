@@ -2,3 +2,6 @@ datasets==2.7.1
 spacy==3.3.0
 pyserini==0.18.0
 transformers==4.24.0
+pandas==1.4.2
+tqdm==4.64.0
+deep_translator==1.9.1
