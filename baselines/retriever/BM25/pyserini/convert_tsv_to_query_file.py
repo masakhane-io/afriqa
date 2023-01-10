@@ -13,7 +13,7 @@ TARGET_LANG={
     "twi" : "en", 
     "yor" : "en", 
     "swa" : "en", 
-    "wol" : "en", 
+    "wol" : "fr", 
     "zul" : "en"
 }
 
@@ -39,7 +39,13 @@ def get_parser() -> argparse.ArgumentParser:
         "--output_dir", type=str, required=True, help="path to store output processed file"
     )
     parser.add_argument(
-        "--output_file_extension", type=str, default="json", choices=["tsv", "txt"], help="path to store output processed file"
+        "--translation_type", type=str, required=True, help="translation type e.g gmt or hmt"
+    )
+    parser.add_argument(
+        "--output_file_extension", type=str, default="txt", choices=["tsv", "txt"], help="path to store output processed file"
+    )
+    parser.add_argument(
+        "--split", type=str, required=True, choices=["train", "dev", "test"], help="data split"
     )
 
     return parser
@@ -59,7 +65,7 @@ def main():
 
     # write strings to jsonl file
     with open(
-        os.path.join(args.output_dir, f"queries.xqa.{args.lang}" + f".{args.output_file_extension}"), mode="w"
+        os.path.join(args.output_dir, f"queries.xqa.{args.lang}.{args.split}" + f".{args.output_file_extension}"), mode="w"
     ) as writer:
         for index, row in lang_df.iterrows():
             if pd.isnull(row[0]):
@@ -77,7 +83,7 @@ def main():
     
 
     with open(
-        os.path.join(args.output_dir, f"queries.xqa.{args.lang}.{TARGET_LANG[args.lang]}" + f".{args.output_file_extension}"), mode="w"
+        os.path.join(args.output_dir, f"queries.xqa.{args.lang}.{args.split}.{TARGET_LANG[args.lang]}.{args.translation_type}" + f".{args.output_file_extension}"), mode="w"
     ) as writer:
         for index, row in lang_df.iterrows():
             if pd.isnull(row[1]):
@@ -86,7 +92,7 @@ def main():
             else:
                 question = row[1]
 
-            if row[2].strip().lower() == "no gold paragraph" or pd.isnull(row[2]):
+            if str(row[2]).strip().lower() == "no gold paragraph" or pd.isnull(row[2]):
                 answer = "[]"
             else:
                 answer = f"['{row[2]}']"
