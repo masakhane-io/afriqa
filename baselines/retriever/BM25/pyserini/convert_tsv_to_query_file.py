@@ -48,6 +48,10 @@ def get_parser() -> argparse.ArgumentParser:
         "--split", type=str, required=True, choices=["train", "dev", "test"], help="data split"
     )
 
+    parser.add_argument(
+        "--row_index", type=int, help="index of the row to be processed", default=1
+    )
+
     return parser
 
 
@@ -63,34 +67,34 @@ def main():
         lang_df = pd.read_csv(args.input_annotation_file, sep="\t", header=0)
 
 
-    # write strings to jsonl file
-    with open(
-        os.path.join(args.output_dir, f"queries.xqa.{args.lang}.{args.split}" + f".{args.output_file_extension}"), mode="w"
-    ) as writer:
-        for index, row in lang_df.iterrows():
-            if pd.isnull(row[0]):
-                question = ""
-                print(f"Question at row {index} is empty")
-            else:
-                question = row[0]
+    # # write strings to jsonl file
+    # with open(
+    #     os.path.join(args.output_dir, f"queries.xqa.{args.lang}.{args.split}" + f".{args.output_file_extension}"), mode="w"
+    # ) as writer:
+    #     for index, row in lang_df.iterrows():
+    #         if pd.isnull(row[0]):
+    #             question = ""
+    #             print(f"Question at row {index} is empty")
+    #         else:
+    #             question = row[0]
 
-            if str(row[3]).strip().lower() == "no gold paragraph" or pd.isnull(row[3]):
-                answer = "[]"
-            else:
-                answer = f"['{row[3]}']"
+    #         if str(row[3]).strip().lower() == "no gold paragraph" or pd.isnull(row[3]):
+    #             answer = "[]"
+    #         else:
+    #             answer = f"['{row[3]}']"
                 
-            writer.write(question + "\t" + answer + "\n")
+    #         writer.write(question + "\t" + answer + "\n")
     
 
     with open(
         os.path.join(args.output_dir, f"queries.xqa.{args.lang}.{args.split}.{TARGET_LANG[args.lang]}.{args.translation_type}" + f".{args.output_file_extension}"), mode="w"
     ) as writer:
         for index, row in lang_df.iterrows():
-            if pd.isnull(row[1]):
+            if pd.isnull(row[args.row_index]):
                 question = ""
                 print(f"Question at row {index} is empty")
             else:
-                question = row[1]
+                question = row[args.row_index]
 
             if str(row[2]).strip().lower() == "no gold paragraph" or pd.isnull(row[2]):
                 answer = "[]"
