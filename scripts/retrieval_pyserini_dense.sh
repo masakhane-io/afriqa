@@ -37,15 +37,15 @@ trec_run_file=runs/run.xqa.${source_lang}.${split}.${src_lang_to_pivot[$source_l
 json_run_file=runs/run.xqa.${source_lang}.${split}.${src_lang_to_pivot[$source_lang]}.$translation.mdpr.json
 queries=$queries_dir/queries.xqa.${source_lang}.${split}.${src_lang_to_pivot[$source_lang]}.$translation.txt
 
-# # Search index and generate a TREC format run file
-# python3 baselines/retriever/dense/pyserini/search.py \
-#     --topics ${queries} \
-#     --index indexes/${pivot_lang_to_index[${src_lang_to_pivot[$source_lang]}]} \
-#     --encoder castorini/mdpr-tied-pft-msmarco \
-#     --encoder-class auto \
-#     --batch-size 64 \
-#     --threads 12 \
-#     --output ${trec_run_file}
+# Search index and generate a TREC format run file
+python3 baselines/retriever/dense/pyserini/search.py \
+    --topics ${queries} \
+    --index indexes/${pivot_lang_to_index[${src_lang_to_pivot[$source_lang]}]} \
+    --encoder castorini/mdpr-tied-pft-msmarco \
+    --encoder-class auto \
+    --batch-size 32 \
+    --threads 12 \
+    --output ${trec_run_file}
 
 # Convert TREC Run File to Readable JSON format
 echo "[INFO] Converting TREC Run File to Readable JSON format"

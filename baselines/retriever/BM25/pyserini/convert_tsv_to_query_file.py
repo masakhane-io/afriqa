@@ -106,3 +106,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+
+# python3 baselines/retriever/BM25/pyserini/convert_tsv_to_query_file.py  --input_annotation_file /home/oogundep/african_qa/queries/gmt_topics/test.kin.tsv --lang kin --output_dir /home/oogundep/african_qa/queries/processed_topics --translation_type google_machine_translation --split test --row_index -1 

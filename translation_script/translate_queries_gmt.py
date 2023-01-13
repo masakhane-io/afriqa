@@ -1,6 +1,6 @@
 """
 Script is based on this package: https://github.com/nidhaloff/deep-translator/tree/a694c92b6741fc9c3200835b64be2fd910cd761b
-How to use: python tranlation_script/translate_queries.py --questions_file_path=tranlation_script/test.csv --source=hausa --pivot=english --output_file_path=tranlation_script/twi_translated.csv
+How to use: python translation_script/translate_queries.py --questions_file_path translation_script/test.csv --source hausa --pivot english --output_file_path translation_script/twi_translated.csv
 """
 
 import os
@@ -10,7 +10,7 @@ from tqdm.auto import tqdm
 from deep_translator import GoogleTranslator
 
 TARGET_LANG = {
-    "bem": "auto",
+    "bemba": "auto",
     "fon": "auto",
     "hausa": "ha",
     "igbo": "ig",
@@ -20,7 +20,11 @@ TARGET_LANG = {
     "swahili": "sw",
     "wolof": "auto",
     "zulu": "zu",
+}
+
+PIVOT_LANG = {
     "english": "en",
+    "french": "fr"
 }
 
 
@@ -39,7 +43,7 @@ def get_parser() -> argparse.ArgumentParser:
         type=str,
         required=True,
         help="original language of the data to be translated",
-        choices=TARGET_LANG,
+        choices=TARGET_LANG.keys(),
     )
     parser.add_argument(
         "--pivot",
@@ -47,7 +51,7 @@ def get_parser() -> argparse.ArgumentParser:
         required=True,
         default="en",
         help="language in which to make translation to",
-        choices=TARGET_LANG,
+        choices=PIVOT_LANG.keys(),
     )
     parser.add_argument(
         "--output_file_path",
@@ -75,17 +79,19 @@ def main():
 
     print("Starting Transalation ...")
     for i, text in enumerate(questions):
-        translated = GoogleTranslator(source=args.source, target=args.pivot).translate(
+        translated = GoogleTranslator(source=TARGET_LANG[args.source], target=PIVOT_LANG[args.pivot]).translate(
             text=text
         )
         lang_df.loc[i, "Translated Question in English"] = translated
         progress_bar.update(1)
 
     if args.output_file_path.endswith("tsv"):
-        lang_df.to_csv(f"translated_{args.output_file_path}", sep="\t", index=False)
+        print("saving to file ")
+        print(args.output_file_path)
+        lang_df.to_csv(args.output_file_path, sep="\t", index=False)
     elif args.output_file_path.endswith("csv"):
         print("saving to file ")
-        print(f"translated_{args.output_file_path}")
+        print(args.output_file_path)
         lang_df.to_csv(args.output_file_path, index=False)
     print("Translation Completed")
 
