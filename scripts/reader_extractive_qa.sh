@@ -1,5 +1,5 @@
 model_name_or_path=bert-base-uncased
-dataset_name=squad_v2
+dataset_name=Tevatron/wikipedia-nq
 output_dir=models
 batch_size=64
 num_train_epochs=10

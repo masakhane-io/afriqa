@@ -26,13 +26,13 @@ def predict_seq_2_seq_with_pipeline(model_name: str, question: str, context:str)
 def extractive_with_pipeline(model_name: str, question: str, context:str):
     nlp = pipeline("question-answering",  model=model_name, device=0)
 
-    result = question_answerer(question=question, context=context)
+    result = nlp(question=question, context=context)
     print(
         f"Answer: '{result['answer']}', score: {round(result['score'], 4)}, start: {result['start']}, end: {result['end']}"
     )
 
 
 if __name__ == "__main__":
-    question = "When did Beyonce start becoming popular?"
-    context = 'Beyoncé Giselle Knowles-Carter (/biːjɒnseɪ/ bee-YON-say) (born September 4, 1981) is an American singer, songwriter, record producer and actress. Born and raised in Houston, Texas, she performed in various singing and dancing competitions as a child, and rose to fame in the late 1990s as lead singer of R&B girl-group Destinys Child. Managed by her father, Mathew Knowles, the group became one of the worlds best-selling girl groups of all time. Their hiatus saw the release of Beyoncés debut album, Dangerously in Love (2003), which established her as a solo artist worldwide, earned five Grammy Awards and featured the Billboard Hot 100 number-one singles "Crazy in Love" and "Baby Boy".'
-    predict_seq_2_seq_with_pipeline("/home/oogundep/african_qa/models/google/mt5-base/checkpoint-80000", question, context)
+    question = "What kind of organization is leading the country of Zambia?"
+    context = 'UPND Youth League UPND Youth League The UPND Youth League is a youth organization of the United Party for National Development, a political party in Zambia. Formation. The Youth League was formed to help mobilise youths towards, the values, beliefs and principles of the UPND, the official opposition political party in Zambia. The Youth League was formed by the youth members of the party to spearhead the issues faced by young people in Zambia. Among them was the 4-month closure of the Copperbelt University which the Zambian Education minister had closed following student protests. UPND Youth League The UPND Youth League is'
+    extractive_with_pipeline("deepset/bert-base-cased-squad2", question, context)

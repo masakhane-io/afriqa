@@ -52,6 +52,6 @@ python3 baselines/retriever/BM25/pyserini/convert_trec_run_to_dpr_retrieval_run.
 
 # Evaluate the retriever
 echo "[INFO] BM25 Evaluation Results"
-python -m pyserini.eval.evaluate_dpr_retrieval --topk 10 20 50 100 --retrieval ${json_run_file}
+python -m pyserini.eval.evaluate_dpr_retrieval --topk 10 20 100 --retrieval ${json_run_file}
 
 echo "================================================="

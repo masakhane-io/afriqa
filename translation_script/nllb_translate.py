@@ -58,12 +58,12 @@ def main():
     if args.queries_file.endswith('csv'):
         lang_df = pd.read_csv(args.queries_file, sep=",", header=0)
     elif args.queries_file.endswith('tsv'):
-        lang_df = pd.read_csv(args.queries_file, sep=",", header=0)
+        lang_df = pd.read_csv(args.queries_file, sep="\t", header=0)
     queries = lang_df['Original question in African language'].to_list()
 
-    tokenizer = AutoTokenizer.from_pretrained("facebook/nllb-200-distilled-600M", 
+    tokenizer = AutoTokenizer.from_pretrained("facebook/nllb-200-1.3B", 
         src_lang=flores_codes[args.lang])
-    model = AutoModelForSeq2SeqLM.from_pretrained("facebook/nllb-200-distilled-600M")
+    model = AutoModelForSeq2SeqLM.from_pretrained("facebook/nllb-200-1.3B")
 
     inputs = tokenizer(queries, padding=True, truncation=True, return_tensors="pt")
 
@@ -80,11 +80,10 @@ def main():
     translations = tokenizer.batch_decode(translated_tokens, skip_special_tokens=True)  
     lang_df['NLLB Translations'] = translations
 
+    print(f"Saving to {args.output_file}...")
     if args.output_file.endswith('.tsv'):
-        print(f"Saving to {args.output_file}...")
         lang_df.to_csv(args.output_file, sep="\t", index=False)
     else:
-        print(f"Saving to {args.output_file}...")
         lang_df.to_csv(args.output_file, index=False)
 
     print("Done Translating")

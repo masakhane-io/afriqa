@@ -110,3 +110,5 @@ if __name__ == "__main__":
 
 
 # python3 baselines/retriever/BM25/pyserini/convert_tsv_to_query_file.py  --input_annotation_file /home/oogundep/african_qa/queries/gmt_topics/test.kin.tsv --lang kin --output_dir /home/oogundep/african_qa/queries/processed_topics --translation_type google_machine_translation --split test --row_index -1 
+
+# python3 baselines/retriever/BM25/pyserini/convert_tsv_to_query_file.py  --input_annotation_file queries/nllb_topics/test.zul.tsv --output_dir /home/oogundep/african_qa/queries/processed_topics --translation_type nllb_1_3b_translation --split test --row_index -1 --lang zul

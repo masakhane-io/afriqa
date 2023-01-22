@@ -30,7 +30,7 @@ for lang in fr en; do
 
 done
 
-for source_lang in bem hau ibo kin twi zul
+for source_lang in zul
 do
 
     echo "================================================="
