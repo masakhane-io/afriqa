@@ -1,5 +1,11 @@
 from typing import List, Optional, Dict
 
+import torch
+import torch.nn as nn
+from torch import Tensor
+from typing import Optional, Tuple, Union
+import torch.nn.functional as F
+
 import re
 import string
 from tqdm import tqdm
@@ -9,6 +15,37 @@ from transformers import DPRReader, DPRReaderTokenizer
 from pygaggle.qa.base import Reader, Answer, Question, Context
 from pygaggle.qa.span_selection import DprSelection
 from pygaggle.data.retrieval import RetrievalExample
+
+from transformers import BertConfig, DPRConfig, BertModel, DPRReader, DPRReaderOutput, DPRReaderTokenizer
+
+import __main__
+
+class UpdatedDPRReader(nn.Module):
+    def __init__(self) -> None:
+        super(UpdatedDPRReader, self).__init__()
+
+        self.model = DPRReader(DPRConfig(**BertConfig.get_config_dict("bert-base-multilingual-uncased")[0]))
+        bert_model = BertModel(BertConfig.from_pretrained("bert-base-multilingual-uncased"))
+
+        self.model.span_predictor.encoder.bert_model = bert_model
+
+    def forward(
+        self,
+        input_ids: Optional[Tensor] = None,
+        attention_mask: Optional[Tensor] = None,
+        inputs_embeds: Optional[Tensor] = None,
+        output_attentions: bool = None,
+        output_hidden_states: bool = None,
+        return_dict=None,
+    ) -> Union[DPRReaderOutput, Tuple[Tensor, ...]]:
+
+        return self.model(
+            input_ids,
+            attention_mask=attention_mask,
+            inputs_embeds=inputs_embeds,
+            output_attentions=output_attentions,
+            output_hidden_states=output_hidden_states,
+            return_dict=return_dict)
 
 
 class DprReader(Reader):
@@ -38,7 +75,10 @@ class DprReader(Reader):
         if span_selection_rules is None:
             span_selection_rules = [DprSelection()]
         self.device = device
-        self.model = DPRReader.from_pretrained(model_name).to(self.device).eval()
+        setattr(__main__, "UpdatedDPRReader", UpdatedDPRReader)
+        # self.model = UpdatedDPRReader()
+        self.model = torch.load(model_name)
+        self.model.to(self.device)
         if tokenizer_name:
             self.tokenizer = DPRReaderTokenizer.from_pretrained(tokenizer_name)
         else:
@@ -68,6 +108,7 @@ class DprReader(Reader):
             )
             input_ids = encoded_inputs['input_ids'].to(self.device)
             attention_mask = encoded_inputs['attention_mask'].to(self.device)
+
             outputs = self.model(
                 input_ids=input_ids,
                 attention_mask=attention_mask,

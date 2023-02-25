@@ -56,9 +56,9 @@ def main():
     assert os.path.exists(args.queries_file), f'The queries file path \{args.queries_file}\ does not exist.'
 
     if args.queries_file.endswith('csv'):
-        lang_df = pd.read_csv(args.queries_file, sep=",", header=0)
+        lang_df = pd.read_csv(args.queries_file, sep=",", header=0, dtype=object)
     elif args.queries_file.endswith('tsv'):
-        lang_df = pd.read_csv(args.queries_file, sep="\t", header=0)
+        lang_df = pd.read_csv(args.queries_file, sep="\t", header=0, dtype=object)
     queries = lang_df['Original question in African language'].to_list()
 
     tokenizer = AutoTokenizer.from_pretrained("facebook/nllb-200-1.3B", 
