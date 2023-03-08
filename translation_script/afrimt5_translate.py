@@ -1,6 +1,6 @@
 """
 Script to translate queries using AfriMT5.
-How to: python afrimt5_translate.py --model_name <model name or path> --queries_file <path to csv/tsv file with queries> --source_lang <Source language e.g hausa> --target_lang <Target language e.g hausa> --output_file <path to output csv/tsv file>
+How to: python afrimt5_translate.py  --queries_file <path to csv/tsv file with queries> --source_lang <Source language e.g hausa> --target_lang <Target language e.g hausa> --output_file <path to output csv/tsv file>
 """
 import os
 import argparse
@@ -9,15 +9,30 @@ from transformers import AutoConfig, AutoModelForSeq2SeqLM, AutoTokenizer
 
 lang_2_modelname = {
     "bemba": "",
-    "fon": "masakhane/afrimt5_fon_fr_news",
-    "hausa": "masakhane/afrimt5_hau_en_news",
-    "igbo": "masakhane/afrimt5_ibo_en_news",
+    "fon": "masakhane/afribyt5_fon_fr_news",
+    "hausa": "masakhane/afribyt5_hau_en_news",
+    "igbo": "masakhane/afribyt5_ibo_en_news",
     "kinyarwanda": "",
-    "twi": "masakhane/afrimt5_twi_en_news",
-    "yoruba": "masakhane/afrimt5_yor_en_news",
-    "swahili": "masakhane/afrimt5_swa_en_news",
-    "wolof": "masakhane/afrimt5_wol_fr_news",
-    "zulu": "masakhane/afrimt5_zul_en_news",
+    "twi": "masakhane/afribyt5_twi_en_news",
+    "yoruba": "masakhane/afribyt5_yor_en_news",
+    "swahili": "masakhane/afribyt5_swa_en_news",
+    "wolof": "masakhane/afribyt5_wol_fr_news",
+    "zulu": "masakhane/afribyt5_zul_en_news",
+}
+
+lang_2_lang_code = {
+    "hausa": "hau",
+    "igbo": "ibo",
+    "yoruba": "yor",
+    "swahili": "swa",
+    "zulu": "zul",
+    "kinyarwanda": "kin",
+    "bemba": "bem",
+    "fon": "fon",
+    "twi": "twi",
+    "wolof": "wol",
+    "english": "en",
+    "french": "fr",
 }
 
 
@@ -53,6 +68,12 @@ def get_parser() -> argparse.ArgumentParser:
         required=True,
         help="File path to save translations"
     )
+    parser.add_argument(
+        "--decoding_strategy",
+        type=str,
+        default="beam",
+        help="Decoding strategy to use. Options are beam and nucleus",
+    )
 
     return parser
 
@@ -68,11 +89,11 @@ def main():
         lang_df = pd.read_csv(args.queries_file, sep="\t", header=0)
     queries = lang_df['Original question in African language'].to_list()
 
-    config = AutoConfig.from_pretrained(args.model_name)
-    tokenizer = AutoTokenizer.from_pretrained(args.model_name, use_fast=True)
+    config = AutoConfig.from_pretrained(lang_2_modelname[args.source_lang])
+    tokenizer = AutoTokenizer.from_pretrained(lang_2_modelname[args.source_lang], use_fast=True)
     model = AutoModelForSeq2SeqLM.from_pretrained(lang_2_modelname[args.source_lang], config=config)
 
-    model.resize_token_embeddings(len(tokenizer))
+    # model.resize_token_embeddings(len(tokenizer))
     tokenizer.src_lang = args.source_lang
     tokenizer.tgt_lang = args.target_lang
 
@@ -80,9 +101,14 @@ def main():
     inputs = tokenizer(queries, padding=True, truncation=True, return_tensors="pt")
 
     print("Translating Queries...")
-    translated_tokens = model.generate(
-            **inputs, max_length=64
+    if args.decoding_strategy == "beam":
+        translated_tokens = model.generate(
+            **inputs, max_length=64, num_beams=10,  early_stopping=True, do_sample = True, decoder_start_token_id = model.config.bos_token_id
         )
+    else:
+        translated_tokens = model.generate(
+                **inputs, max_length=64, do_sample=True, top_p = 0.8, num_return_sequences=1, early_stopping=True, decoder_start_token_id = model.config.bos_token_id
+            )
     
     translations = tokenizer.batch_decode(translated_tokens, skip_special_tokens=True)  
     lang_df['AfriMT5 Translations'] = translations
@@ -99,3 +125,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+    # python translation_script/afrimt5_translate.py --queries_file /home/oogundep/african_qa/queries/official_topics/ibo/test.ibo.tsv --source_lang igbo --target_lang english --output_file queries/afrimt5_topics/test.ibo.tsv --decoding_strategy beam

@@ -49,7 +49,7 @@ def get_parser() -> argparse.ArgumentParser:
         "--pivot",
         type=str,
         required=True,
-        default="en",
+        default="english",
         help="language in which to make translation to",
         choices=PIVOT_LANG.keys(),
     )
@@ -71,9 +71,9 @@ def main():
     ), f"The input annotation file: '{args.input_annotation_file}' does not exist"
 
     if args.questions_file_path.endswith("csv"):
-        lang_df = pd.read_csv(args.questions_file_path, sep=",", header=0)
+        lang_df = pd.read_csv(args.questions_file_path, sep=",", header=0, dtype=object)
     elif args.questions_file_path.endswith("tsv"):
-        lang_df = pd.read_csv(args.questions_file_path, sep="\t", header=0)
+        lang_df = pd.read_csv(args.questions_file_path, sep="\t", header=0, dtype=object)
     questions = lang_df["Original question in African language"].to_list()
     progress_bar = tqdm(range(len(questions)))
 

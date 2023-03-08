@@ -7,7 +7,7 @@ from sklearn.model_selection import train_test_split
 
 TARGET_LANG={
     "bem" : "en", 
-    "fon" : "en", 
+    "fon" : "fr", 
     "hau" : "en", 
     "ibo" : "en", 
     "kin" : "en", 
@@ -55,9 +55,9 @@ def main():
     assert os.path.exists(args.input_annotation_file), f"The input annotation file: \'{args.input_annotation_file}\' does not exist"
 
     if args.input_annotation_file.endswith("csv"):
-        lang_df = pd.read_csv(args.input_annotation_file, sep=",", header=0)
+        lang_df = pd.read_csv(args.input_annotation_file, sep=",", header=0, dtype=object)
     elif args.input_annotation_file.endswith("tsv"):
-        lang_df = pd.read_csv(args.input_annotation_file, sep="\t", header=0)
+        lang_df = pd.read_csv(args.input_annotation_file, sep="\t", header=0, dtype=object)
     
     negatives_df = lang_df[lang_df[f'Answer in pivot language'] == "No Gold Paragraph"]
     positives_df = lang_df[lang_df[f'Answer in pivot language'] != "No Gold Paragraph"]
@@ -77,15 +77,15 @@ def main():
     dev_df = pd.concat([dev_positives, dev_negatives])
     test_df = test_positives
 
-    os.makedirs(os.path.join(args.output_dir, "topics", args.lang), exist_ok=True)
+    os.makedirs(os.path.join(args.output_dir, args.lang), exist_ok=True)
 
-    train_df.drop(columns=[f'Answer in pivot language', 'Answer translated into African language', 'Action for data processing (answer)'], inplace=True)
-    dev_df.drop(columns=[f'Answer in pivot language',  'Answer translated into African language', 'Action for data processing (answer)'], inplace=True)
-    test_df.drop(columns=[f'Answer in pivot language', 'Answer translated into African language', 'Action for data processing (answer)'], inplace=True)
+    # train_df.drop(columns=[f'Answer in pivot language', 'Answer translated into African language', 'Action for data processing (answer)'], inplace=True)
+    # dev_df.drop(columns=[f'Answer in pivot language',  'Answer translated into African language', 'Action for data processing (answer)'], inplace=True)
+    # test_df.drop(columns=[f'Answer in pivot language', 'Answer translated into African language', 'Action for data processing (answer)'], inplace=True)
 
-    train_df.to_csv(os.path.join(args.output_dir, "topics", args.lang ,f"train.{args.lang}.{args.output_file_extension}"), sep="\t", index=False)
-    dev_df.to_csv(os.path.join(args.output_dir, "topics", args.lang ,f"dev.{args.lang}.{args.output_file_extension}"), sep="\t", index=False)
-    test_df.to_csv(os.path.join(args.output_dir, "topics", args.lang ,f"test.{args.lang}.{args.output_file_extension}"), sep="\t", index=False)
+    train_df.to_csv(os.path.join(args.output_dir, args.lang ,f"train.{args.lang}.{args.output_file_extension}"), sep="\t", index=False)
+    dev_df.to_csv(os.path.join(args.output_dir, args.lang ,f"dev.{args.lang}.{args.output_file_extension}"), sep="\t", index=False)
+    test_df.to_csv(os.path.join(args.output_dir, args.lang ,f"test.{args.lang}.{args.output_file_extension}"), sep="\t", index=False)
 
 
     print(f"Train: {len(train_df)}")

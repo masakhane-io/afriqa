@@ -138,3 +138,6 @@ collections/
 queries/
 tranlation_script/twi_translated.csv
 tranlation_script/test.csv
+
+*.log
+old_runs/

@@ -1,8 +1,7 @@
-source_lang=$1
-split=$2
-translation=$3
-queries_dir=$4
-index_path=indexes
+split=$1
+translation=$2
+queries_dir=$3
+index_path=/store2/scratch/oogundep/bm25indexes
 collection_path=collections
 index_link=https://huggingface.co/datasets/ToluClassics/masakhane-xqa-prebuilt-sparse-indexes/resolve/main
 
@@ -26,32 +25,35 @@ for lang in fr en; do
 
 done
 
-echo "================================================="
-echo "[INFO] The Pivot language for ${source_lang} is ${src_lang_to_pivot[$source_lang]}"
-echo "[INFO] Searching Index: ${pivot_lang_to_index[${src_lang_to_pivot[$source_lang]}]}"
+for source_lang in swa yor;
+do
+    echo "================================================="
+    echo "[INFO] The Pivot language for ${source_lang} is ${src_lang_to_pivot[$source_lang]}"
+    echo "[INFO] Searching Index: ${pivot_lang_to_index[${src_lang_to_pivot[$source_lang]}]}"
 
-trec_run_file=runs/run.xqa.${source_lang}.${split}.${src_lang_to_pivot[$source_lang]}.$translation.bm25.trec
-json_run_file=runs/run.xqa.${source_lang}.${split}.${src_lang_to_pivot[$source_lang]}.$translation.bm25.json
-queries=$queries_dir/queries.xqa.${source_lang}.${split}.${src_lang_to_pivot[$source_lang]}.$translation.txt
+    trec_run_file=runs/run.xqa.${source_lang}.${split}.${src_lang_to_pivot[$source_lang]}.$translation.bm25.trec
+    json_run_file=runs/run.xqa.${source_lang}.${split}.${src_lang_to_pivot[$source_lang]}.$translation.bm25.json
+    queries=$queries_dir/queries.xqa.${source_lang}.${split}.${src_lang_to_pivot[$source_lang]}.$translation.txt
 
-# Search index and generate a TREC format run file
-python3 baselines/retriever/BM25/pyserini/search.py \
-    --index indexes/${pivot_lang_to_index[${src_lang_to_pivot[$source_lang]}]} \
-    --topics ${queries} \
-    --language ${src_lang_to_pivot[$source_lang]} \
-    --output ${trec_run_file}
+    # Search index and generate a TREC format run file
+    python3 baselines/retriever/BM25/pyserini/search.py \
+        --index /store2/scratch/oogundep/bm25indexes/${pivot_lang_to_index[${src_lang_to_pivot[$source_lang]}]} \
+        --topics ${queries} \
+        --language ${src_lang_to_pivot[$source_lang]} \
+        --output ${trec_run_file}
 
-# Convert TREC Run File to Readable JSON format
-echo "[INFO] Converting TREC Run File to Readable JSON format"
-python3 baselines/retriever/BM25/pyserini/convert_trec_run_to_dpr_retrieval_run.py \
-    --topics ${queries} \
-    --index indexes/${pivot_lang_to_index[${src_lang_to_pivot[$source_lang]}]} \
-    --input ${trec_run_file} \
-    --output ${json_run_file} \
-    --store-raw
+    # Convert TREC Run File to Readable JSON format
+    echo "[INFO] Converting TREC Run File to Readable JSON format"
+    python3 baselines/retriever/BM25/pyserini/convert_trec_run_to_dpr_retrieval_run.py \
+        --topics ${queries} \
+        --index /store2/scratch/oogundep/bm25indexes/${pivot_lang_to_index[${src_lang_to_pivot[$source_lang]}]} \
+        --input ${trec_run_file} \
+        --output ${json_run_file} \
+        --store-raw
 
-# Evaluate the retriever
-echo "[INFO] BM25 Evaluation Results"
-python -m pyserini.eval.evaluate_dpr_retrieval --topk 10 20 100 --retrieval ${json_run_file}
+    # Evaluate the retriever
+    echo "[INFO] BM25 Evaluation Results"
+    python -m pyserini.eval.evaluate_dpr_retrieval --topk 10 20 100 --retrieval ${json_run_file}
 
-echo "================================================="
+    echo "================================================="
+done
