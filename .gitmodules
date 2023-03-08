@@ -3,4 +3,4 @@
 	url = https://github.com/attardi/wikiextractor
 [submodule "DPR"]
 	path = DPR
-	url = https://github.com/facebookresearch/DPR.git
+	url = https://github.com/ToluClassics/DPR.git
