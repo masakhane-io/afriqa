@@ -3,34 +3,37 @@ Script to translate queries using AfriMT5.
 How to: python afrimt5_translate.py  --queries_file <path to csv/tsv file with queries> --source_lang <Source language e.g hausa> --target_lang <Target language e.g hausa> --output_file <path to output csv/tsv file>
 """
 import os
+import random
 import argparse
 import pandas as pd
-from transformers import AutoConfig, AutoModelForSeq2SeqLM, AutoTokenizer
+from transformers import AutoConfig, AutoModelForSeq2SeqLM, AutoTokenizer,  M2M100Tokenizer, M2M100ForConditionalGeneration
+
+random.seed(65)
 
 lang_2_modelname = {
     "bemba": "",
     "fon": "masakhane/afribyt5_fon_fr_news",
-    "hausa": "masakhane/afribyt5_hau_en_news",
-    "igbo": "masakhane/afribyt5_ibo_en_news",
+    "hausa": "masakhane/m2m100_418M_hau_en_rel_news_ft",
+    "igbo": "masakhane/m2m100_418M_ibo_en_rel_news_ft",
     "kinyarwanda": "",
-    "twi": "masakhane/afribyt5_twi_en_news",
-    "yoruba": "masakhane/afribyt5_yor_en_news",
-    "swahili": "masakhane/afribyt5_swa_en_news",
-    "wolof": "masakhane/afribyt5_wol_fr_news",
-    "zulu": "masakhane/afribyt5_zul_en_news",
+    "twi": "masakhane/m2m100_418M_twi_en_rel_news_ft",
+    "yoruba": "masakhane/m2m100_418M_yor_en_rel_news_ft",
+    "swahili": "masakhane/m2m100_418M_hau_en_rel_news_ft",
+    "wolof": "masakhane/m2m100_418M_wol_fr_rel_news_ft",
+    "zulu": "masakhane/m2m100_418M_zul_en_rel_news_ft",
 }
 
 lang_2_lang_code = {
-    "hausa": "hau",
-    "igbo": "ibo",
-    "yoruba": "yor",
-    "swahili": "swa",
-    "zulu": "zul",
+    "hausa": "ha",
+    "igbo": "ig",
+    "yoruba": "yo",
+    "swahili": "sw",
+    "zulu": "zu",
     "kinyarwanda": "kin",
     "bemba": "bem",
-    "fon": "fon",
-    "twi": "twi",
-    "wolof": "wol",
+    "fon": "fa",
+    "twi": "tl",
+    "wolof": "wo",
     "english": "en",
     "french": "fr",
 }
@@ -89,21 +92,30 @@ def main():
         lang_df = pd.read_csv(args.queries_file, sep="\t", header=0)
     queries = lang_df['Original question in African language'].to_list()
 
-    config = AutoConfig.from_pretrained(lang_2_modelname[args.source_lang])
-    tokenizer = AutoTokenizer.from_pretrained(lang_2_modelname[args.source_lang], use_fast=True)
-    model = AutoModelForSeq2SeqLM.from_pretrained(lang_2_modelname[args.source_lang], config=config)
 
-    # model.resize_token_embeddings(len(tokenizer))
-    tokenizer.src_lang = args.source_lang
-    tokenizer.tgt_lang = args.target_lang
+    config = AutoConfig.from_pretrained(lang_2_modelname[args.source_lang])
+    tokenizer = M2M100Tokenizer.from_pretrained(lang_2_modelname[args.source_lang], use_fast=True)
+    model = M2M100ForConditionalGeneration.from_pretrained(lang_2_modelname[args.source_lang], config=config)
+
+     # model.resize_token_embeddings(len(tokenizer))
+    tokenizer.src_lang = lang_2_lang_code[args.source_lang]
+
+    # forced_bos_token=lang_2_lang_code[args.target_lang]
+    # forced_bos_token_id = (
+    #         tokenizer.lang_code_to_id[forced_bos_token] if forced_bos_token is not None else None
+    #     )
+
+    # model.config.forced_bos_token_id = forced_bos_token_id
+    model.resize_token_embeddings(len(tokenizer))
 
 
     inputs = tokenizer(queries, padding=True, truncation=True, return_tensors="pt")
 
+
     print("Translating Queries...")
     if args.decoding_strategy == "beam":
         translated_tokens = model.generate(
-            **inputs, max_length=64, num_beams=10,  early_stopping=True, do_sample = True, decoder_start_token_id = model.config.bos_token_id
+            **inputs, max_length=64, num_beams=5, early_stopping=True, do_sample = True, forced_bos_token_id=tokenizer.get_lang_id(lang_2_lang_code[args.target_lang])
         )
     else:
         translated_tokens = model.generate(
@@ -111,6 +123,7 @@ def main():
             )
     
     translations = tokenizer.batch_decode(translated_tokens, skip_special_tokens=True)  
+
     lang_df['AfriMT5 Translations'] = translations
 
     print(f"Saving to {args.output_file}...")
