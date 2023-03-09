@@ -75,10 +75,13 @@ class DprReader(Reader):
         if span_selection_rules is None:
             span_selection_rules = [DprSelection()]
         self.device = device
-        setattr(__main__, "UpdatedDPRReader", UpdatedDPRReader)
-        # self.model = UpdatedDPRReader()
-        self.model = torch.load(model_name)
-        self.model.to(self.device)
+        try:
+            setattr(__main__, "UpdatedDPRReader", UpdatedDPRReader)
+            # self.model = UpdatedDPRReader()
+            self.model = torch.load(model_name)
+            self.model.to(self.device)
+        except:
+            self.model = DPRReader.from_pretrained(model_name).to(self.device).eval()
         if tokenizer_name:
             self.tokenizer = DPRReaderTokenizer.from_pretrained(tokenizer_name)
         else:

@@ -25,7 +25,7 @@ for lang in fr en; do
 
 done
 
-for source_lang in swa yor;
+for source_lang in "zul";
 do
     echo "================================================="
     echo "[INFO] The Pivot language for ${source_lang} is ${src_lang_to_pivot[$source_lang]}"
