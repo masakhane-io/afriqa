@@ -29,45 +29,45 @@ for lang in fr en; do
 
 done
 
-# for source_lang in fon wol;
-# do
+for source_lang in "wol" ;
+do
 
-#     echo "================================================="
-#     echo "[INFO] The Pivot language for ${source_lang} is ${src_lang_to_pivot[$source_lang]}"
-#     echo "[INFO] Searching Index: ${pivot_lang_to_index[${src_lang_to_pivot[$source_lang]}]}"
+    echo "================================================="
+    echo "[INFO] The Pivot language for ${source_lang} is ${src_lang_to_pivot[$source_lang]}"
+    echo "[INFO] Searching Index: ${pivot_lang_to_index[${src_lang_to_pivot[$source_lang]}]}"
 
-#     trec_run_file=runs/run.xqa.${source_lang}.${split}.${src_lang_to_pivot[$source_lang]}.$translation.mdpr.trec
-#     json_run_file=runs/run.xqa.${source_lang}.${split}.${src_lang_to_pivot[$source_lang]}.$translation.mdpr.json
-#     queries=$queries_dir/queries.xqa.${source_lang}.${split}.${src_lang_to_pivot[$source_lang]}.$translation.txt
+    trec_run_file=runs/run.xqa.${source_lang}.${split}.${src_lang_to_pivot[$source_lang]}.$translation.mdpr.trec
+    json_run_file=runs/run.xqa.${source_lang}.${split}.${src_lang_to_pivot[$source_lang]}.$translation.mdpr.json
+    queries=$queries_dir/queries.xqa.${source_lang}.${split}.${src_lang_to_pivot[$source_lang]}.$translation.txt
 
-#     python3 baselines/retriever/dense/pyserini/search.py \
-#         --topics ${queries} \
-#         --index   /store2/scratch/oogundep/indexes/frwiki-20220420-index-mdpr \
-#         --encoder castorini/mdpr-tied-pft-msmarco \
-#         --encoder-class auto \
-#         --batch-size 128 \
-#         --threads 12 \
-#         --output ${trec_run_file}
+    python3 baselines/retriever/dense/pyserini/search.py \
+        --topics ${queries} \
+        --index   /store2/scratch/oogundep/indexes/frwiki-20220420-index-mdpr \
+        --encoder castorini/mdpr-tied-pft-msmarco \
+        --encoder-class auto \
+        --batch-size 128 \
+        --threads 12 \
+        --output ${trec_run_file}
 
 
-#     # Convert TREC Run File to Readable JSON format
-#     echo "[INFO] Converting TREC Run File to Readable JSON format"
-#     python3 baselines/retriever/BM25/pyserini/convert_trec_run_to_dpr_retrieval_run.py \
-#         --topics ${queries} \
-#         --index indexes/${pivot_lang_to_bm25_index[${src_lang_to_pivot[$source_lang]}]} \
-#         --input ${trec_run_file} \
-#         --output ${json_run_file} \
-#         --store-raw
+    # Convert TREC Run File to Readable JSON format
+    echo "[INFO] Converting TREC Run File to Readable JSON format"
+    python3 baselines/retriever/BM25/pyserini/convert_trec_run_to_dpr_retrieval_run.py \
+        --topics ${queries} \
+        --index indexes/${pivot_lang_to_bm25_index[${src_lang_to_pivot[$source_lang]}]} \
+        --input ${trec_run_file} \
+        --output ${json_run_file} \
+        --store-raw
 
-#     # Evaluate the retriever
-#     echo "[INFO] Multilingual Dense Passage Retrieval Evaluation Results"
-#     python -m pyserini.eval.evaluate_dpr_retrieval --topk 10 20 100 --retrieval ${json_run_file}
+    # Evaluate the retriever
+    echo "[INFO] Multilingual Dense Passage Retrieval Evaluation Results"
+    python -m pyserini.eval.evaluate_dpr_retrieval --topk 10 20 100 --retrieval ${json_run_file}
 
-#     echo "================================================="
-# done
+    echo "================================================="
+done
 
 # awk -F'\t' '{ print "{\"query_id\": " NR-1", \"query\": " $1", \"answer\": " $2"}" }' queries/processed_topics_new/queries.xqa.bem.test.en.google_machine_translation.txt
-for source_lang in yor swa;
+for source_lang in "ibo" "hau" "zul" "twi";
 do
 
     echo "================================================="
