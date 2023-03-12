@@ -68,14 +68,5 @@ done
 # #   --save_steps $save_steps
 
 
-# python train_extractive_reader.py \
-#     encoder.sequence_length=350 \
-#     train_files={path to the retriever train set results file} \
-#     dev_files={path to the retriever dev set results file}  \
-#     gold_passages_src={path to data.gold_passages_info.nq_train file} \
-#     gold_passages_src_dev={path to data.gold_passages_info.nq_dev file} \
-#     output_dir={path to output dir}
-
-
 # # python3 /home/oogundep/african_qa/baselines/reader/convert_dpr_original_checkpoint_to_pytorch.py --type reader --src /home/oogundep/african_qa/models/dpr_extractive_reader_multilingual.2.3304 --dest /home/oogundep/african_qa/models/hgf
 # # python3 /home/oogundep/african_qa/baselines/reader/evaluate_reader.py --retrieval-file /home/oogundep/african_qa/runs/run.xqa.wol.test.fr.human_translation.mdpr-hybrid.json --reader dpr --retriever score --settings dpr --output-file /home/oogundep/african_qa/runs/reader/out.json --model-name /home/oogundep/african_qa/models/hgf --tokenizer-name bert-base-multilingual-uncased --topk-em 10 20 50 100

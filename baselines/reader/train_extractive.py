@@ -196,7 +196,27 @@ class DataTrainingArguments:
                 extension = self.test_file.split(".")[-1]
                 assert extension in ["csv", "json"], "`test_file` should be a csv or a json file."
 
+def tevatron_patches_to_examples(batch):
+    """
+    Converts a batch of tevatron patches to a list of examples.
+    """
 
+    answers_batch_list = []
+    for i, passages in enumerate(batch["positive_passages"]):
+        k_list = []
+        for j, passage in enumerate(passages):
+            if batch["answers"][i][0] in passage["text"]:
+                k_list.append({"text":[batch["answers"][i][0]], "answer_start": [passage["text"].index(batch["answers"][i][0])] })
+            else:
+                k_list.append({"text":[], "answer_start": []})
+        answers_batch_list.append(k_list)
+
+    return {
+        "query_id": [query_id+"_"+str(i) for i, query_id in enumerate(batch["query_id"]) for _ in batch["positive_passages"][i]],
+        "context": [passage["text"] for passages in batch["positive_passages"] for passage in passages],
+        "questions": [query for i, query in enumerate(batch["query"]) for _ in batch["positive_passages"][i]],
+        "answers": [answers_batch_list[i][j] for i, passages in enumerate(batch["positive_passages"]) for j, passage in enumerate(passages)]
+    }
 
 def main():
     # See all possible arguments in src/transformers/training_args.py
@@ -271,6 +291,8 @@ def main():
             cache_dir=model_args.cache_dir,
             use_auth_token=True if model_args.use_auth_token else None,
         )
+        if data_args.dataset_name == "Tevatron/wikipedia-nq":
+            raw_datasets = raw_datasets.map(tevatron_patches_to_examples, batched=True, batch_size=1000, remove_columns=raw_datasets["train"].column_names)
     else:
         data_files = {}
         if data_args.train_file is not None:
@@ -489,7 +511,7 @@ def main():
 
             # One example can give several spans, this is the index of the example containing this span of text.
             sample_index = sample_mapping[i]
-            tokenized_examples["example_id"].append(examples["id"][sample_index])
+            tokenized_examples["example_id"].append(examples["query_id"][sample_index])
 
             # Set to None the offset_mapping that are not part of the context so it's easy to determine if a token
             # position is part of the context or not.
@@ -501,9 +523,9 @@ def main():
         return tokenized_examples
 
     if training_args.do_eval:
-        if "validation" not in raw_datasets:
+        if "validation" not in raw_datasets and "dev" not in raw_datasets:
             raise ValueError("--do_eval requires a validation dataset")
-        eval_examples = raw_datasets["validation"]
+        eval_examples = raw_datasets["validation"] if "validation" in raw_datasets else raw_datasets["dev"]
         if data_args.max_eval_samples is not None:
             # We will select sample from whole data
             max_eval_samples = min(len(eval_examples), data_args.max_eval_samples)
