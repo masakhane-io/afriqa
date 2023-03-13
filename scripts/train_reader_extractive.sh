@@ -7,7 +7,7 @@ num_train_epochs=5
 max_seq_length=384
 save_steps=10000
 
-CUDA_VISIBLE_DEVICES=4 python3 baselines/reader/train_seq_2_seq.py \
+CUDA_VISIBLE_DEVICES=4 python3 baselines/reader/train_extractive.py \
   --model_name_or_path $model_name_or_path \
   --dataset_name $dataset_name \
   --do_train \
