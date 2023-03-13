@@ -1,4 +1,4 @@
-model_name_or_path=ToluClassics/extractive_reader_nq
+model_name_or_path=ToluClassics/mt5-base
 # dataset_name=Tevatron/wikipedia-nq+
 dataset_name=squad_v2
 output_dir=models
