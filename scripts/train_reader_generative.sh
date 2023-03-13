@@ -22,6 +22,9 @@ CUDA_VISIBLE_DEVICES=4 python3 baselines/reader/train_seq_2_seq.py \
   --save_steps $save_steps \
   --overwrite_output_dir \
   --push_to_hub \
+  --context_column context \
+  --question_column question \
+  --answer_column answers \
   --push_to_hub_model_id=extractive_reader_nq_squad_v2 \
   --weight_decay 0.01 \
   --eval_steps 1000 \
