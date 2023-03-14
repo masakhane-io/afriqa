@@ -24,7 +24,7 @@ from transformers.utils import check_min_version, send_example_telemetry
 from transformers.utils.versions import require_version
 
 
-from utils import postprocess_qa_predictions
+# from utils import postprocess_qa_predictions
 from hgf_trainer import QuestionAnsweringSeq2SeqTrainer
 
 logger = logging.getLogger(__name__)
@@ -258,6 +258,10 @@ def main():
         datefmt="%m/%d/%Y %H:%M:%S",
         handlers=[logging.StreamHandler(sys.stdout)],
     )
+
+    if training_args.should_log:
+        # The default of training_args.log_level is passive, so we set log level at info here to have that default.
+        transformers.utils.logging.set_verbosity_info()
 
     log_level = training_args.get_process_log_level()
     logger.setLevel(log_level)
@@ -608,11 +612,7 @@ def main():
 
         references = [{"id": ex["id"], "answers": ex[answer_column]} for ex in examples]
         return EvalPrediction(predictions=formatted_predictions, label_ids=references)
-    
-    metric = evaluate.load("squad_v2" if data_args.version_2_with_negative else "squad")
-    def compute_metrics(p: EvalPrediction):
-        return metric.compute(predictions=p.predictions, references=p.label_ids)
-   
+
     # Initialize our Trainer
     trainer = QuestionAnsweringSeq2SeqTrainer(
         model=model,
@@ -656,7 +656,6 @@ def main():
     num_beams = data_args.num_beams if data_args.num_beams is not None else training_args.generation_num_beams
     if training_args.do_eval:
         logger.info("*** Evaluate ***")
-        metrics = trainer.evaluate()
         metrics = trainer.evaluate(max_length=max_length, num_beams=num_beams, metric_key_prefix="eval")
 
         max_eval_samples = data_args.max_eval_samples if data_args.max_eval_samples is not None else len(eval_dataset)
@@ -695,7 +694,6 @@ def main():
 def _mp_fn(index):
     # For xla_spawn (TPUs)
     main()
-
 
 if __name__ == "__main__":
     main()
