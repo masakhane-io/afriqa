@@ -3,7 +3,7 @@ model_name_or_path=Atnafu/mt5-base-squad2-fin
 # dataset_name=Tevatron/wikipedia-nq+
 dataset_name=squad_v2
 output_dir=models
-batch_size=8
+batch_size= 32
 num_train_epochs=5
 max_seq_length=384
 save_steps=10000
@@ -30,7 +30,5 @@ CUDA_VISIBLE_DEVICES=4 python3 baselines/reader/train_seq_2_seq.py \
   --weight_decay 0.01 \
   --eval_steps 1000 \
   --logging_steps 1000 \
-  --metric_for_best_model="eval_f1,eval_HasAns_f1,eval_NoAns_f1,exact" \
-  --greater_is_better=True \
   --evaluation_strategy="steps" \
   --version_2_with_negative
