@@ -66,6 +66,7 @@ class ModelArguments:
         },
     )
 
+
 @dataclass
 class DataTrainingArguments:
     """
@@ -250,7 +251,7 @@ def main():
 
     # Sending telemetry. Tracking the example usage helps us better allocate resources to maintain them. The
     # information sent is the one passed as arguments along with your Python/PyTorch versions.
-    send_example_telemetry("train_seq_2_seq", model_args, data_args)
+    send_example_telemetry("run_seq2seq_qa", model_args, data_args)
 
     # Setup logging
     logging.basicConfig(
@@ -380,6 +381,7 @@ def main():
     else:
         logger.info("There is nothing to do. Please pass `do_train`, `do_eval` and/or `do_predict`.")
         return
+
     # Get the column names for input/target.
     dataset_columns = question_answering_column_name_mapping.get(data_args.dataset_name, None)
     if data_args.question_column is None:
@@ -579,8 +581,7 @@ def main():
     metric = evaluate.load("squad_v2" if data_args.version_2_with_negative else "squad")
 
     def compute_metrics(p: EvalPrediction):
-        preds = p.predictions[0] if isinstance(p.predictions, tuple) else p.predictions
-        return metric.compute(predictions=p.preds, references=p.label_ids)
+        return metric.compute(predictions=p.predictions, references=p.label_ids)
 
     # Post-processing:
     def post_processing_function(
@@ -602,9 +603,6 @@ def main():
             feature_index = feature_per_example[example_index]
             predictions[example["id"]] = decoded_preds[feature_index]
 
-        #Update the metric with the current predictions.
-        metric.add_batch(predictions=predictions)
-
         # Format the result to the format the metric expects.
         if data_args.version_2_with_negative:
             formatted_predictions = [
@@ -625,7 +623,7 @@ def main():
         eval_examples=eval_examples if training_args.do_eval else None,
         tokenizer=tokenizer,
         data_collator=data_collator,
-        compute_metrics=compute_metrics,
+        compute_metrics=compute_metrics if training_args.predict_with_generate else None,
         post_process_function=post_processing_function,
     )
 
@@ -697,6 +695,7 @@ def main():
 def _mp_fn(index):
     # For xla_spawn (TPUs)
     main()
+
 
 if __name__ == "__main__":
     main()
