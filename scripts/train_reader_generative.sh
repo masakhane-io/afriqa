@@ -11,6 +11,7 @@ save_steps=10000
 CUDA_VISIBLE_DEVICES=4 python3 baselines/reader/train_seq_2_seq.py \
   --model_name_or_path $model_name_or_path \
   --dataset_name $dataset_name \
+  --do_train \
   --do_eval \
   --per_device_train_batch_size $batch_size  \
   --per_device_eval_batch_size $batch_size  \
