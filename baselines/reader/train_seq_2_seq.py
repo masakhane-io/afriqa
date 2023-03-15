@@ -14,6 +14,7 @@ from transformers import (
     AutoModelForSeq2SeqLM,
     AutoTokenizer,
     DataCollatorForSeq2Seq,
+    EvalPrediction,
     HfArgumentParser,
     Seq2SeqTrainingArguments,
     set_seed,
@@ -27,6 +28,7 @@ from utils import postprocess_qa_predictions
 from hgf_trainer import QuestionAnsweringSeq2SeqTrainer
 
 logger = logging.getLogger(__name__)
+
 
 @dataclass
 class ModelArguments:
@@ -64,6 +66,7 @@ class ModelArguments:
             )
         },
     )
+
 
 @dataclass
 class DataTrainingArguments:
@@ -257,6 +260,10 @@ def main():
         datefmt="%m/%d/%Y %H:%M:%S",
         handlers=[logging.StreamHandler(sys.stdout)],
     )
+
+    if training_args.should_log:
+        # The default of training_args.log_level is passive, so we set log level at info here to have that default.
+        transformers.utils.logging.set_verbosity_info()
 
     log_level = training_args.get_process_log_level()
     logger.setLevel(log_level)
@@ -617,7 +624,7 @@ def main():
         eval_examples=eval_examples if training_args.do_eval else None,
         tokenizer=tokenizer,
         data_collator=data_collator,
-        compute_metrics=compute_metrics if training_args.predict_with_generate else None,
+        compute_metrics=compute_metrics,
         post_process_function=post_processing_function,
     )
 
