@@ -1,4 +1,4 @@
-export HF_TOKEN=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
+
 model_name_or_path=Atnafu/mt5-base-squad2-fin
 # dataset_name=Tevatron/wikipedia-nq+
 dataset_name=squad_v2
@@ -24,6 +24,7 @@ CUDA_VISIBLE_DEVICES=4 python3 baselines/reader/train_seq_2_seq.py \
   --push_to_hub \
   --push_to_hub_token $HF_TOKEN \
   --context_column context \
+  --predict_with_generate True \
   --question_column question \
   --answer_column answers \
   --push_to_hub_model_id=extractive_reader_nq_squad_v2 \
