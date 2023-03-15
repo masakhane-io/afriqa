@@ -24,7 +24,7 @@ from transformers.utils import check_min_version, send_example_telemetry
 from transformers.utils.versions import require_version
 
 
-# from utils import postprocess_qa_predictions
+from utils import postprocess_qa_predictions
 from hgf_trainer import QuestionAnsweringSeq2SeqTrainer
 
 logger = logging.getLogger(__name__)
@@ -581,6 +581,7 @@ def main():
     metric = evaluate.load("squad_v2" if data_args.version_2_with_negative else "squad")
 
     def compute_metrics(p: EvalPrediction):
+        preds = p.predictions[0] if isinstance(p.predictions, tuple) else p.predictions
         return metric.compute(predictions=p.predictions, references=p.label_ids)
 
     # Post-processing:
@@ -602,6 +603,8 @@ def main():
             # This is the index of the feature associated to the current example.
             feature_index = feature_per_example[example_index]
             predictions[example["id"]] = decoded_preds[feature_index]
+        
+        metric.add_batch(predictions=predictions)
 
         # Format the result to the format the metric expects.
         if data_args.version_2_with_negative:
@@ -623,7 +626,7 @@ def main():
         eval_examples=eval_examples if training_args.do_eval else None,
         tokenizer=tokenizer,
         data_collator=data_collator,
-        compute_metrics=compute_metrics if training_args.predict_with_generate else None,
+        compute_metrics=compute_metrics,
         post_process_function=post_processing_function,
     )
 
