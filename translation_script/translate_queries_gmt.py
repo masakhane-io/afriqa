@@ -11,21 +11,49 @@ from deep_translator import GoogleTranslator
 
 TARGET_LANG = {
     "bemba": "auto",
+    "bem": "auto",
     "fon": "auto",
     "hausa": "ha",
+    "hau": "ha",
     "igbo": "ig",
+    "ibo": "ig",
     "kinyarwanda": "rw",
+    "kin": "rw",
     "twi": "ak",
     "yoruba": "yo",
+    "yor": "yo",
     "swahili": "sw",
+    "swa": "sw",
     "wolof": "auto",
+    "wol": "auto",
     "zulu": "zu",
+    "zul": "zu",
 }
 
 PIVOT_LANG = {
     "english": "en",
     "french": "fr"
 }
+
+def google_translate(translation_sentence: list, source_lang: str, target_lang) -> str:
+    """
+    Translate a sentence from source language to target language
+    :param translation_sentence: sentence to be translated
+    :param source_lang: source language
+    :param target_lang: target language
+    :return: translated sentence
+    """
+    translator = GoogleTranslator(source=PIVOT_LANG[source_lang], target=TARGET_LANG[target_lang])
+    result = []
+    for text in translation_sentence:
+        try:
+            translated = translator.translate(text=text)
+        except Exception as e:
+            translated = text
+        result.append(translated)
+    
+    return result
+
 
 
 def get_parser() -> argparse.ArgumentParser:

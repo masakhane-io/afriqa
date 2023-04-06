@@ -141,3 +141,4 @@ tranlation_script/test.csv
 
 *.log
 old_runs/
+.vscode/

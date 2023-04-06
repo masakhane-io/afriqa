@@ -85,6 +85,18 @@ class DataTrainingArguments:
     dataset_config_name: Optional[str] = field(
         default=None, metadata={"help": "The configuration name of the dataset to use (via the datasets library)."}
     )
+    context_column: Optional[str] = field(
+        default="context",
+        metadata={"help": "The name of the column in the datasets containing the contexts (for question answering)."},
+    )
+    question_column: Optional[str] = field(
+        default="question",
+        metadata={"help": "The name of the column in the datasets containing the questions (for question answering)."},
+    )
+    answer_column: Optional[str] = field(
+        default="answers",
+        metadata={"help": "The name of the column in the datasets containing the answers (for question answering)."},
+    )
     train_file: Optional[str] = field(default=None, metadata={"help": "The input training data file (a text file)."})
     validation_file: Optional[str] = field(
         default=None,
@@ -308,7 +320,6 @@ def main():
         raw_datasets = load_dataset(
             extension,
             data_files=data_files,
-            field="data",
             cache_dir=model_args.cache_dir,
             use_auth_token=True if model_args.use_auth_token else None,
         )
@@ -360,9 +371,32 @@ def main():
         column_names = raw_datasets["validation"].column_names
     else:
         column_names = raw_datasets["test"].column_names
-    question_column_name = "question" if "question" in column_names else column_names[0]
-    context_column_name = "context" if "context" in column_names else column_names[1]
-    answer_column_name = "answers" if "answers" in column_names else column_names[2]
+    
+    if data_args.question_column is None:
+        question_column_name = "question" if "question" in column_names else column_names[0]
+    else:
+        question_column_name = data_args.question_column
+        if question_column_name not in column_names:
+            raise ValueError(
+                f"--question_column' value '{data_args.question_column}' needs to be one of: {', '.join(column_names)}"
+            )
+    if data_args.context_column is None:
+        context_column_name = "context" if "context" in column_names else column_names[1]
+    else:
+        context_column_name = data_args.context_column
+        if context_column_name not in column_names:
+            raise ValueError(
+                f"--context_column' value '{data_args.context_column}' needs to be one of: {', '.join(column_names)}"
+            )
+    if data_args.answer_column is None:
+        answer_column_name = "answers" if "answers" in column_names else column_names[2]
+    else:
+        answer_column_name = data_args.answer_column
+        if answer_column_name not in column_names:
+            raise ValueError(
+                f"--answer_column' value '{data_args.answer_column}' needs to be one of: {', '.join(column_names)}"
+            )
+
 
     # Padding side determines if we do (question|context) or (context|question).
     pad_on_right = tokenizer.padding_side == "right"

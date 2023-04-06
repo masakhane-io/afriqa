@@ -12,13 +12,13 @@ random.seed(65)
 
 lang_2_modelname = {
     "bemba": "",
-    "fon": "masakhane/afribyt5_fon_fr_news",
+    "fon": "masakhane/m2m100_418M_fon_fr_rel_news_ft",
     "hausa": "masakhane/m2m100_418M_hau_en_rel_news_ft",
     "igbo": "masakhane/m2m100_418M_ibo_en_rel_news_ft",
     "kinyarwanda": "",
     "twi": "masakhane/m2m100_418M_twi_en_rel_news_ft",
     "yoruba": "masakhane/m2m100_418M_yor_en_rel_news_ft",
-    "swahili": "masakhane/m2m100_418M_hau_en_rel_news_ft",
+    "swahili": "masakhane/m2m100_418M_swa_en_rel_news_ft",
     "wolof": "masakhane/m2m100_418M_wol_fr_rel_news_ft",
     "zulu": "masakhane/m2m100_418M_zul_en_rel_news_ft",
 }

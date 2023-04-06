@@ -1,4 +1,6 @@
 from typing import List, Optional, Dict
+import unidecode
+from nltk.translate.bleu_score import corpus_bleu, sentence_bleu
 
 import torch
 import torch.nn as nn
@@ -8,6 +10,7 @@ import torch.nn.functional as F
 
 import re
 import string
+import evaluate 
 from tqdm import tqdm
 from collections import Counter
 from transformers import DPRReader, DPRReaderTokenizer
@@ -182,9 +185,10 @@ class ReaderEvaluator:
     """
     def __init__(
         self,
-        reader: Reader,
+        reader: Reader = None,
     ):
         self.reader = reader
+
     def evaluate(
         self,
         examples: List[RetrievalExample],
@@ -235,7 +239,11 @@ class ReaderEvaluator:
 
         def lower(text):
             return text.lower()
-        return white_space_fix(remove_articles(remove_punc(lower(s))))
+        
+        def unidecode_str(text):
+            return unidecode.unidecode(str(text))
+        
+        return white_space_fix(remove_articles(remove_punc(lower(unidecode_str(s)))))
     
     @staticmethod
     def f1_score(prediction, ground_truth):
@@ -248,10 +256,15 @@ class ReaderEvaluator:
         precision = 1.0 * num_same / len(prediction_tokens)
         recall = 1.0 * num_same / len(ground_truth_tokens)
         f1 = (2 * precision * recall) / (precision + recall)
-        #print(precision)
         return f1, precision, recall
+    
+    @staticmethod
+    def bleu_score(prediction, ground_truth):
+        prediction_tokens = ReaderEvaluator._normalize_answer(prediction)
+        ground_truth_tokens = ReaderEvaluator._normalize_answer(ground_truth)
 
-
+        bleu = sentence_bleu([ground_truth_tokens.split()] ,prediction_tokens.split(), weights=(1, 0, 0, 0)) 
+        return bleu
 
 
 

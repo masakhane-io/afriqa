@@ -1,7 +1,7 @@
 split=$1
 translation=$2
 queries_dir=$3
-index_path=/store2/scratch/oogundep/bm25indexes
+index_path=indexes
 collection_path=collections
 index_link=https://huggingface.co/datasets/ToluClassics/masakhane-xqa-prebuilt-sparse-indexes/resolve/main
 
@@ -25,7 +25,7 @@ for lang in fr en; do
 
 done
 
-for source_lang in "ibo" "hau" "zul" "wol" "twi";
+for source_lang in bem hau ibo kin swa twi yor zul fon wol;
 do
     echo "================================================="
     echo "[INFO] The Pivot language for ${source_lang} is ${src_lang_to_pivot[$source_lang]}"
@@ -57,5 +57,3 @@ do
 
     echo "================================================="
 done
-
-python3 baselines/retriever/BM25/pyserini/convert_trec_run_to_dpr_retrieval_run.py --input dumps/datasets/afro-xlmr-msmarco-wikinq/hau/masakhane_ht.test.trec --index /store2/scratch/oogundep/bm25indexes/enwiki-20220501-index --topics queries/processed_topics_new/queries.xqa.hau.test.en.human_translation.txt --output dumps/datasets/afro-xlmr-msmarco-wikinq/hau/masakhane_ht.test.json --store-raw

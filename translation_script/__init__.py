@@ -1,0 +1,1 @@
+from nllb_translate import nllb_translate

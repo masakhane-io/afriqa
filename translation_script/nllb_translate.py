@@ -10,16 +10,48 @@ from transformers import NllbTokenizer
 
 flores_codes = {
     "bemba" : "bem_Latn",
+    "bem" : "bem_Latn",
     "fon" : "fon_Latn",
     "hausa" : "hau_Latn",
+    "hau" : "hau_Latn",
     "igbo" : "ibo_Latn",
+    "ibo" : "ibo_Latn",
     "kinyarwanda" : "kin_Latn",
+    "kin" : "kin_Latn",
     "twi" : "twi_Latn",
     "yoruba" : "yor_Latn",
+    "yor" : "yor_Latn",
     "swahili" : "swh_Latn",
+    "swa" : "swh_Latn",
     "wolof" : "wol_Latn",
-    "zulu" : "zul_Latn"
+    "wol" : "wol_Latn",
+    "zulu" : "zul_Latn",
+    "zul" : "zul_Latn",
+    "french" : "fra_Latn",
+    "fr" : "fra_Latn",
+    "english" : "eng_Latn",  
+    "en" : "eng_Latn",
 }
+
+def nllb_translate(translation_sentence: list, source_lang: str, target_lang) -> str:
+    """
+    Translates a sentence from a source language to English using NLLB.
+    Args:
+        translation_sentence (str): Sentence to be translated.
+        lang (str): Source language.
+    Returns:
+        str: Translated sentence.
+    """
+    tokenizer = AutoTokenizer.from_pretrained("facebook/nllb-200-1.3B", 
+        src_lang=flores_codes[source_lang])
+    model = AutoModelForSeq2SeqLM.from_pretrained("facebook/nllb-200-1.3B")
+    inputs = tokenizer(translation_sentence, padding=True, truncation=True, return_tensors="pt")
+
+    translated_tokens = model.generate(
+        **inputs, forced_bos_token_id=tokenizer.lang_code_to_id[flores_codes[target_lang]], max_length=30
+    )
+    translations = tokenizer.batch_decode(translated_tokens, skip_special_tokens=True)  
+    return translations
 
 def get_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
