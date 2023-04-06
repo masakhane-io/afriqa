@@ -1,4 +1,4 @@
-# Cross-lingual Question Answering for African Languages
+# AfriQA: Cross-lingual Open-Retrieval Question Answering for African Languages
 
 AfriQA is the first cross-lingual question answering (QA) dataset with a focus on African languages. The dataset includes over 12,000 XOR QA examples across 10 African languages, making it an invaluable resource for developing more equitable QA technology.
 African languages have historically been underserved in the digital landscape, with far less in-language content available online. This makes it difficult for QA systems to provide accurate information to users in their native language. However, cross-lingual open-retrieval question answering (XOR QA) systems can help fill this gap by retrieving answer content from other languages.
