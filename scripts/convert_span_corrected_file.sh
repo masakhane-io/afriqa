@@ -14,7 +14,7 @@ output_dir=queries/processed_topics_new
 #     done
 # done
 
-for lang in "ibo" "hau" "zul" "wol" "twi"; do
+for lang in "yor" "swa" "fon"; do
     for split in "test"; do
         python3 baselines/retriever/BM25/pyserini/convert_tsv_to_query_file.py \
             --input_annotation_file $translation_dir/$split.$lang.tsv \

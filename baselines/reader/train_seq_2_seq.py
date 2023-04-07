@@ -328,7 +328,6 @@ def main():
         raw_datasets = load_dataset(
             extension,
             data_files=data_files,
-            field="data",
             cache_dir=model_args.cache_dir,
             use_auth_token=True if model_args.use_auth_token else None,
         )
@@ -592,6 +591,7 @@ def main():
         preds = outputs.predictions
         if isinstance(preds, tuple):
             preds = preds[0]
+        
         decoded_preds = tokenizer.batch_decode(preds, skip_special_tokens=True)
 
         # Build a map example to its corresponding features.
