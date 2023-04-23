@@ -1,5 +1,19 @@
 # Processing Wiki Dumps
 
+The English and French passages for this project are drawn from Wikipedia snapshots of 2022-05-01 and 2022-04-20 respectively, and are downloaded from the [Internet Archive](https://archive.org/) to enable open-domain experiments.
+The raw documents can be downloaded from the following URLS:
+
+- https://archive.org/download/enwiki-20220501/enwiki-20220501-pages-articles-multistream.xml.bz2
+- https://archive.org/download/frwiki-20220420/frwiki-20220420-pages-articles-multistream.xml.bz2
+
+To run the Wikipedia processing pipeline; We adopt the same processing used in the [Dense Passage Retriever Paper](https://arxiv.org/pdf/2004.04906.pdf) and [Pre-processing Matters! Improved Wikipedia Corpora for Open-Domain Question Answering](https://link.springer.com/chapter/10.1007/978-3-031-28241-6_11).
+
+The pipeline has been bundled into this [script](scripts/download_process_dumps.sh). You can run using the code provided below:
+
+```terminal
+bash scripts/generate_process_dumps.sh /path/to/dir_containing_dumps
+```
+
 This document contains information on how to convert downloaded XML wikipedia dumps into 100 token long passages stored in JSON files.
 
 For processing, we extract the Wikipedia articles into multiple jsonlines file, The articles are then preprocessed, cleaned and stored in a SQLite database file after which they are chunked into 100 token long passages.

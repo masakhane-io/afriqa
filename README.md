@@ -1,12 +1,62 @@
 # AfriQA: Cross-lingual Open-Retrieval Question Answering for African Languages
 
+[![CC BY 4.0][cc-by-shield]][cc-by]
+
+This work is licensed under a
+[Creative Commons Attribution 4.0 International License][cc-by].
+
+[![CC BY 4.0][cc-by-image]][cc-by]
+
+[cc-by]: http://creativecommons.org/licenses/by/4.0/
+[cc-by-image]: https://i.creativecommons.org/l/by/4.0/88x31.png
+[cc-by-shield]: https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg
+
+
 AfriQA is the first cross-lingual question answering (QA) dataset with a focus on African languages. The dataset includes over 12,000 XOR QA examples across 10 African languages, making it an invaluable resource for developing more equitable QA technology.
 African languages have historically been underserved in the digital landscape, with far less in-language content available online. This makes it difficult for QA systems to provide accurate information to users in their native language. However, cross-lingual open-retrieval question answering (XOR QA) systems can help fill this gap by retrieving answer content from other languages.
 AfriQA focuses specifically on African languages where cross-lingual answer content is the only high-coverage source of information. Previous datasets have primarily focused on languages where cross-lingual QA augments coverage from the target language, but AfriQA highlights the importance of African languages as a realistic use case for XOR QA.
 
+## Languages
+
+There are currently 10 languages covered in AfriQA:
+
+- Bemba (bem)
+- Fon (fon)
+- Hausa (hau)
+- Igbo (ibo)
+- Kinyarwanda (kin)
+- Swahili (swa)
+- Twi (twi)
+- Wolof (wol)
+- Yorùbá (yor)
+
 ## Dataset Download
 
+Question-answer pairs for each language and `train-dev-test` split are in the [data directory](data/queries) in `jsonlines` format.
 
+- Dataset Naming Convention ==> `queries.afriqa.{lang_code}.{en/fr}.{split}.json`
+- Data Format:
+    - id : Question ID
+    - question : Question in African Language
+    - translated_question : Question translated into a pivot language (English/French)
+    - answers : Answer in African Language
+    - lang : Datapoint Language (African Language) e.g `bem`
+    - split : Dataset Split
+    - translated_answer : Answer in Pivot Language
+    - translation_type : Translation type of question and answers
+
+
+    ```bash
+    {   "id": 0, 
+        "question": "Bushe icaalo ca Egypt caali tekwapo ne caalo cimbi?", 
+        "translated_question": "Has the country of Egypt been colonized before?", 
+        "answers": "['Emukwai']", 
+        "lang": "bem", 
+        "split": "dev", 
+        "translated_answer": "['yes']", 
+        "translation_type": "human_translation"
+        }
+    ```
 
 ## Environment and Repository Setup
 
@@ -47,25 +97,6 @@ To download:
 - [English](https://huggingface.co/datasets/ToluClassics/masakhane_wiki_100/resolve/main/masakhane_wiki_100-english/corpus.jsonl)
 - [French](https://huggingface.co/datasets/ToluClassics/masakhane_wiki_100/resolve/main/masakhane_wiki_100-french/corpus.jsonl)
 
-
-However, to run the processing pipeline yourself; We adopt the same processing used in the [Dense Passage Retriever Paper](https://arxiv.org/pdf/2004.04906.pdf).
-The pipeline has been bundled into this [script](scripts/download_process_dumps.sh). You can run using the code provided below:
-
-```terminal
-bash scripts/generate_process_dumps.sh /path/to/dir_containing_dumps
-```
-
-However, [this document](docs/process_wiki_dumps.md) provides a detailed break down of the individual steps.
-
-## Retriever
-
-### BM25
-
-### mDPR
-
-### Hybrid
-
-## Reader
 
 
 ## BibTeX entry and citation info
