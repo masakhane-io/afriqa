@@ -81,15 +81,8 @@ Question-answer pairs for each language and `train-dev-test` split are in the [d
     ```bash
     pip install -r requirements.txt
     ```
-## Source Data -- WIkipedia
 
-The English and French passages for this project are drawn from Wikipedia snapshots of 2022-05-01 and 2022-04-20 respectively, and are downloaded from the [Internet Archive](https://archive.org/) to enable open-domain experiments.
-The raw documents can be downloaded from the following URLS:
-
-- https://archive.org/download/enwiki-20220501/enwiki-20220501-pages-articles-multistream.xml.bz2
-- https://archive.org/download/frwiki-20220420/frwiki-20220420-pages-articles-multistream.xml.bz2
-
-### Processing Wikipedia dumps
+### Processing Wikipedia dumps for Retrieval
 
 The already processed dumps are available on HuggingFace 😊, It is recommended to use this exact corpora to be able to reproduce the baseline results.
 To download:
@@ -97,6 +90,29 @@ To download:
 - [English](https://huggingface.co/datasets/ToluClassics/masakhane_wiki_100/resolve/main/masakhane_wiki_100-english/corpus.jsonl)
 - [French](https://huggingface.co/datasets/ToluClassics/masakhane_wiki_100/resolve/main/masakhane_wiki_100-french/corpus.jsonl)
 
+However, to prepare the Wikipedia retrieval corpus yourself, consult [docs/process_wiki_dumps.md](docs/process_wiki_dumps.md).
+
+### Data Splits
+
+For all languages, there are three splits.
+
+The original splits were named `train`, `dev` and `test` and they correspond to the `train`, `validation` and `test` splits.
+
+The splits have the following sizes :
+
+| Language        | train | dev | test |
+|-----------------|------:|-----------:|-----:|
+| Bemba         |  502 | 503 |  314 |
+| Fon          |  427 | 428 |  386 |
+| Hausa           |  435 | 436 |  300 |
+| Igbo            |  417 | 418 |  409 |
+| Kinyarwanda     	  |   407 |  409 |  347 |
+| Swahili       |  415 |   417 |  302 |
+| Twi          |  451 |   452 |  490 |
+| Wolof        |  503 |    504 |  334 |
+| Yoruba          |  360 |   361 |  332 |
+| Zulu        |  387 |    388 |  325 |
+| <b>Total</b>    |  <b>4333</b>  |  <b>4346</b>  |<b>3560</b>  |
 
 
 ## BibTeX entry and citation info
