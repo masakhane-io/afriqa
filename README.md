@@ -114,7 +114,6 @@ The splits have the following sizes :
 | Zulu        |  387 |    388 |  325 |
 | <b>Total</b>    |  <b>4333</b>  |  <b>4346</b>  |<b>3560</b>  |
 
-
 ## BibTeX entry and citation info
 
 ```
