@@ -32,6 +32,9 @@ def main():
 
     args = parser.parse_args()
 
+    assert args.split in args.input_data_split, "The split must be contained in the input data split file"
+    assert args.lang in  args.gold_passages, "The language must be contained in the gold passages file"
+
     # Open the gold passages
     with open(args.gold_passages, "r") as f:
         gold_passages = json.load(f)
