@@ -84,7 +84,7 @@ Question-answer pairs for each language and `train-dev-test` split are in the [d
 
 ### Processing Wikipedia dumps for Retrieval
 
-The already processed dumps are available on HuggingFace 😊, It is recommended to use this exact corpora to be able to reproduce the baseline results.
+The already processed dumps are available on Hugging Face 😊, It is recommended to use this exact corpora to be able to reproduce the baseline results.
 To download:
 
 - [English](https://huggingface.co/datasets/ToluClassics/masakhane_wiki_100/resolve/main/masakhane_wiki_100-english/corpus.jsonl)
