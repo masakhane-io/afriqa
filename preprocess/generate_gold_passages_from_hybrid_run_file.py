@@ -20,30 +20,31 @@ def main():
 
     for qa_pair in tqdm(gold_passages):
         ques_translated = qa_pair["question_translated"]
-        answer_gold = qa_pair["answer_pivot"]["text"][0]
+        answer_gold = qa_pair["answer_pivot"]["text"][0] if len(qa_pair["answer_pivot"]["text"]) > 0 else None
 
-        if not qa_pair["context"]:
-            breakout_flag = False
-            for _, value in retrieval_run.items():
-                if ques_translated.lower().strip() == value['question'].lower().strip() and answer_gold.lower().strip() == value['answers'][0].lower().strip():
-                    for ctxt in value['contexts']:
-                        if ctxt['has_answer']:
-                            qa_pair["context"] = ctxt['text']
-                            qa_pair["title"] = ""
-                            try:
-                                qa_pair["answer_pivot"]["answer_start"].append(qa_pair["context"].index(answer_gold))
-                            except ValueError as e:
-                                print(qa_pair)
-                                print(ctxt)
-                                print("=====================================")
-                            breakout_flag = True
-                            break
+        if answer_gold:
+            if not qa_pair["context"]:
+                breakout_flag = False
+                for _, value in retrieval_run.items():
+                    if ques_translated.lower().strip() == value['question'].lower().strip() and answer_gold.lower().strip() == value['answers'][0].lower().strip():
+                        for ctxt in value['contexts']:
+                            if ctxt['has_answer']:
+                                qa_pair["context"] = ctxt['text']
+                                qa_pair["title"] = ""
+                                try:
+                                    qa_pair["answer_pivot"]["answer_start"].append(qa_pair["context"].index(answer_gold))
+                                except ValueError as e:
+                                    print(qa_pair)
+                                    print(ctxt)
+                                    print("=====================================")
+                                breakout_flag = True
+                                break
 
-                if breakout_flag:
-                    break
+                    if breakout_flag:
+                        break
 
-        if qa_pair["context"]:
-            mod_gold_passages.append(qa_pair)
+            if qa_pair["context"]:
+                mod_gold_passages.append(qa_pair)
 
 
     # Write the output
