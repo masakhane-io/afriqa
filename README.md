@@ -64,7 +64,6 @@ Question-answer pairs for each language and `train-dev-test` split are in the [d
     from datasets import load_dataset
     dataset = load_dataset("masakhane/afriqa", "bem")
     ```
-
     
 
 ## Environment and Repository Setup
