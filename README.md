@@ -11,6 +11,7 @@ This work is licensed under a
 [cc-by-image]: https://i.creativecommons.org/l/by/4.0/88x31.png
 [cc-by-shield]: https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg
 
+Paper: https://arxiv.org/abs/2305.06897
 
 AfriQA is the first cross-lingual question answering (QA) dataset with a focus on African languages. The dataset includes over 12,000 XOR QA examples across 10 African languages, making it an invaluable resource for developing more equitable QA technology.
 African languages have historically been underserved in the digital landscape, with far less in-language content available online. This makes it difficult for QA systems to provide accurate information to users in their native language. However, cross-lingual open-retrieval question answering (XOR QA) systems can help fill this gap by retrieving answer content from other languages.
@@ -35,28 +36,49 @@ There are currently 10 languages covered in AfriQA:
 Question-answer pairs for each language and `train-dev-test` split are in the [data directory](data/queries) in `jsonlines` format.
 
 - Dataset Naming Convention ==> `queries.afriqa.{lang_code}.{en/fr}.{split}.json`
-- Data Format:
-    - id : Question ID
-    - question : Question in African Language
-    - translated_question : Question translated into a pivot language (English/French)
-    - answers : Answer in African Language
-    - lang : Datapoint Language (African Language) e.g `bem`
-    - split : Dataset Split
-    - translated_answer : Answer in Pivot Language
-    - translation_type : Translation type of question and answers
+    - Data Format:
+        - id : Question ID
+        - question : Question in African Language
+        - translated_question : Question translated into a pivot language (English/French)
+        - answers : Answer in African Language
+        - lang : Datapoint Language (African Language) e.g `bem`
+        - split : Dataset Split
+        - translated_answer : Answer in Pivot Language
+        - translation_type : Translation type of question and answers
 
 
-    ```bash
-    {   "id": 0, 
-        "question": "Bushe icaalo ca Egypt caali tekwapo ne caalo cimbi?", 
-        "translated_question": "Has the country of Egypt been colonized before?", 
-        "answers": "['Emukwai']", 
-        "lang": "bem", 
-        "split": "dev", 
-        "translated_answer": "['yes']", 
-        "translation_type": "human_translation"
-        }
+        ```bash
+        {   "id": 0, 
+            "question": "Bushe icaalo ca Egypt caali tekwapo ne caalo cimbi?", 
+            "translated_question": "Has the country of Egypt been colonized before?", 
+            "answers": "['Emukwai']", 
+            "lang": "bem", 
+            "split": "dev", 
+            "translated_answer": "['yes']", 
+            "translation_type": "human_translation"
+            }
+        ```
+    - The dataset is also available on [Hugging Face](https://huggingface.co/datasets/masakhane/afriqa)
+
+        ```python
+        from datasets import load_dataset
+        dataset = load_dataset("masakhane/afriqa", "bem")
     ```
+
+- Gold Passages for 7 languages is currently available in [data directory](data/gold_passages) in `jsonlines` format.
+
+    - Dataset Naming Convention: ==> `gold_span_passages.afriqa.{lang_code}.{en/fr}.{split}.json`
+    - Gold_Passages Data Format: 
+        - answer_pivot: Answer in English/French
+            - answer_start: Index of answer start in context
+            - text: Answer span
+        - Context: Gold Passage
+        - id : Question ID
+        - question_lang: Question in African language
+        - question_translated: Question translated into pivot language (French/English)
+        - title: Gold passage Title
+
+    
 
 ## Environment and Repository Setup
 
@@ -84,7 +106,7 @@ Question-answer pairs for each language and `train-dev-test` split are in the [d
 
 ### Processing Wikipedia dumps for Retrieval
 
-The already processed dumps are available on Hugging Face 😊, It is recommended to use this exact corpora to be able to reproduce the baseline results.
+The already processed dumps are available on HuggingFace 😊, It is recommended to use this exact corpora to be able to reproduce the baseline results.
 To download:
 
 - [English](https://huggingface.co/datasets/ToluClassics/masakhane_wiki_100/resolve/main/masakhane_wiki_100-english/corpus.jsonl)
@@ -117,5 +139,12 @@ The splits have the following sizes :
 ## BibTeX entry and citation info
 
 ```
-Coming soon...
+@misc{ogundepo2023afriqa,
+      title={AfriQA: Cross-lingual Open-Retrieval Question Answering for African Languages}, 
+      author={Odunayo Ogundepo and Tajuddeen R. Gwadabe and Clara E. Rivera and Jonathan H. Clark and Sebastian Ruder and David Ifeoluwa Adelani and Bonaventure F. P. Dossou and Abdou Aziz DIOP and Claytone Sikasote and Gilles Hacheme and Happy Buzaaba and Ignatius Ezeani and Rooweither Mabuya and Salomey Osei and Chris Emezue and Albert Njoroge Kahira and Shamsuddeen H. Muhammad and Akintunde Oladipo and Abraham Toluwase Owodunni and Atnafu Lambebo Tonja and Iyanuoluwa Shode and Akari Asai and Tunde Oluwaseyi Ajayi and Clemencia Siro and Steven Arthur and Mofetoluwa Adeyemi and Orevaoghene Ahia and Aremu Anuoluwapo and Oyinkansola Awosan and Chiamaka Chukwuneke and Bernard Opoku and Awokoya Ayodele and Verrah Otiende and Christine Mwase and Boyd Sinkala and Andre Niyongabo Rubungo and Daniel A. Ajisafe and Emeka Felix Onwuegbuzia and Habib Mbow and Emile Niyomutabazi and Eunice Mukonde and Falalu Ibrahim Lawan and Ibrahim Said Ahmad and Jesujoba O. Alabi and Martin Namukombo and Mbonu Chinedu and Mofya Phiri and Neo Putini and Ndumiso Mngoma and Priscilla A. Amuok and Ruqayya Nasir Iro and Sonia Adhiambo},
+      year={2023},
+      eprint={2305.06897},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
 ```
