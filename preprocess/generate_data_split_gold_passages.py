@@ -20,7 +20,7 @@ import pandas as pd
 def process_string(sentence: str):
     sentence = sentence.strip().lower()
     sentence = sentence = " ".join(re.split("\s+", sentence, flags=re.UNICODE))
-    return sentence.trim()
+    return sentence.strip()
 
 def main():
     parser = argparse.ArgumentParser()
