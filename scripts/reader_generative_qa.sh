@@ -1,17 +1,20 @@
 translation_type=$1
 data_file_path=$2
+model_name_or_path=$3
 
-#==================================================================================================#
-# Generative QA inference
-#==================================================================================================#
 
-for lang in bem fon hau ibo kin swa twi wol yor zul
+# #==================================================================================================#
+# # Generative QA inference
+# #==================================================================================================#
+
+for lang in bem yor zul hau ibo kin twi swa fon
 do
     for split in test
     do
 
-    model_name_or_path=Atnafu/generative_reader_nq_squad_v2
-    validation_file=${data_file_path}/${split}.${lang}.${translation_type}.json
+    model_name_or_path=$model_name_or_path
+    # validation_file=${data_file_path}/${split}.${lang}.${translation_type}.json
+    validation_file=data/gold_passages/${lang}/gold_span_passages.afriqa.${lang}.en.${split}.json
     output_dir=models
     batch_size=8
     num_train_epochs=10
@@ -39,18 +42,17 @@ do
     done
 done
 
-#==================================================================================================#
-# Multingual Generative QA using a finetuned mt5-base using the in-language queries
-#==================================================================================================#
+# #==================================================================================================#
+# # Multingual Generative QA using a finetuned mt5-base using the in-language queries
+# #==================================================================================================#
 
 
-for lang in bem fon hau ibo kin swa twi wol yor zul
+for lang in bem yor zul hau ibo kin twi swa fon
 do
     for split in test
     do
 
-    model_name_or_path=Atnafu/generative_reader_nq_squad_v2
-    validation_file=${data_file_path}/${split}.${lang}.${translation_type}.json
+    validation_file=data/gold_passages/${lang}/gold_span_passages.afriqa.${lang}.en.${split}.json
     output_dir=models
     batch_size=8
     num_train_epochs=10

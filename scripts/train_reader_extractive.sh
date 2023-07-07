@@ -34,12 +34,13 @@
 
 translation_type=$1
 data_file_path=$2
+model_name_or_path=$3
 
 for lang in kin
 do
     for split in test
     do
-        model_name_or_path=ToluClassics/extractive_reader_afroxlmr_squad_v2
+        model_name_or_path=$model_name_or_path
         validation_file=${data_file_path}/${split}.${lang}.${translation_type}.json
         output_dir=models
         batch_size=16

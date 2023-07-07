@@ -439,7 +439,15 @@ def main():
         def generate_input(_question, _context):
             return " ".join(["question:", _question.lstrip(), "context:", _context.lstrip()])
 
-        inputs = [generate_input(question, context) for question, context in zip(questions, contexts)]
+        inputs = []
+        for question, context in zip(questions, contexts):
+            try:
+                a = generate_input(question, context)
+                inputs.append(a)
+            except Exception as e:
+                continue
+
+
         targets = [answer["text"][0] if len(answer["text"]) > 0 else "" for answer in answers]
         return inputs, targets
 
@@ -601,8 +609,11 @@ def main():
         # Let's loop over all the examples!
         for example_index, example in enumerate(examples):
             # This is the index of the feature associated to the current example.
-            feature_index = feature_per_example[example_index]
-            predictions[example["id"]] = decoded_preds[feature_index]
+            try:
+                feature_index = feature_per_example[example_index]
+                predictions[example["id"]] = decoded_preds[feature_index]
+            except KeyError:
+                continue
 
         # Format the result to the format the metric expects.
         if data_args.version_2_with_negative:
@@ -612,7 +623,7 @@ def main():
         else:
             formatted_predictions = [{"id": k, "prediction_text": v} for k, v in predictions.items()]
 
-        references = [{"id": ex["id"], "answers": ex[answer_column]} for ex in examples]
+        references = [{"id": ex["id"], "answers": ex[answer_column]} for ex in examples if ex["context"] is not None]
         return EvalPrediction(predictions=formatted_predictions, label_ids=references)
 
     # Initialize our Trainer
