@@ -1,8 +1,8 @@
 import os
+from answer_parsing import answers_from_cell, serialize_answers
 import jsonlines
 import argparse
 import pandas as pd
-from tqdm import tqdm
 
 TARGET_LANG={
     "bem" : "en", 
@@ -61,67 +61,29 @@ def main():
 
     assert os.path.exists(args.input_annotation_file), f"The input annotation file: \'{args.input_annotation_file}\' does not exist"
 
-    if args.input_annotation_file.endswith("csv"):
-        lang_df = pd.read_csv(args.input_annotation_file, sep=",", header=0, dtype=object)
-    elif args.input_annotation_file.endswith("tsv"):
-        lang_df = pd.read_csv(args.input_annotation_file, sep="\t", header=0, dtype=object)
-
-
-    # write strings to jsonl file
-    with open(
-        os.path.join(args.output_dir, f"queries.xqa.{args.lang}.{args.split}" + f".{args.output_file_extension}"), mode="w"
-    ) as writer, open(
-        os.path.join(args.output_dir, f"queries.xqa.{args.lang}.{args.split}.{TARGET_LANG[args.lang]}.{args.translation_type}" + f".{args.output_file_extension}"), mode="w"
-    ) as translation_writer, jsonlines.open(
-        os.path.join(args.output_dir, f"queries.xqa.{args.lang}.{args.split}.{TARGET_LANG[args.lang]}.{args.translation_type}" + f".json"), mode="w"
-    ) as json_writer:
+    extension = os.path.splitext(args.input_annotation_file)[1].lower()
+    if extension not in {".csv", ".tsv"}:
+        parser.error("Input annotations must be CSV or TSV")
+    lang_df = pd.read_csv(args.input_annotation_file,
+                          sep="," if extension == ".csv" else "\t", header=0, dtype=object)
+    if lang_df.shape[1] < 4 or not -lang_df.shape[1] <= args.translation_row_index < lang_df.shape[1]:
+        parser.error("Annotation columns or translation_row_index are invalid")
+    os.makedirs(args.output_dir, exist_ok=True)
+    native = os.path.join(args.output_dir, f"queries.xqa.{args.lang}.{args.split}.{args.output_file_extension}")
+    pivot = os.path.join(args.output_dir, f"queries.xqa.{args.lang}.{args.split}.{TARGET_LANG[args.lang]}.{args.translation_type}")
+    with open(native, "w", encoding="utf-8") as writer, open(
+        pivot + f".{args.output_file_extension}", "w", encoding="utf-8"
+    ) as translation_writer, jsonlines.open(pivot + ".json", mode="w") as json_writer:
         for index, row in lang_df.iterrows():
-            if pd.isnull(row[0]):
-                question = ""
-                print(f"Question at row {index} is empty")
-            else:
-                question = row[0]
-            
-            if pd.isnull(row[args.translation_row_index]):
-                translated_question = ""
-                print(f"Question at row {index} is empty")
-            else:
-                translated_question = row[args.translation_row_index]
-
-            if str(row[3]).strip().lower() == "no gold paragraph" or pd.isnull(row[3]):
-                answer = "[]"
-                answer_two = "[]"
-            else:
-                answer = f"['{row[3]}']"
-                answer_two = f"['{row[2]}']"
-            
-            if str(row[2]).strip().lower() == "no gold paragraph" or pd.isnull(row[2]):
-                translated_answer = "[]"
-            else:
-                translated_answer = f"['{row[2]}']"
-                
+            question = "" if pd.isnull(row.iloc[0]) else str(row.iloc[0])
+            translated_question = "" if pd.isnull(row.iloc[args.translation_row_index]) else str(row.iloc[args.translation_row_index])
+            answer = serialize_answers(answers_from_cell(row.iloc[3]))
+            translated_answer = serialize_answers(answers_from_cell(row.iloc[2]))
             writer.write(question + "\t" + answer + "\n")
             translation_writer.write(translated_question + "\t" + translated_answer + "\n")
-            json_writer.write({"id": index, "question": question, "translated_question":translated_question,  "answers": answer, "lang": args.lang, "split": args.split, "translated_answer": answer_two, "translation_type": args.translation_type})
-    
-
-    with open(
-        os.path.join(args.output_dir, f"queries.xqa.{args.lang}.{args.split}.{TARGET_LANG[args.lang]}.{args.translation_type}" + f".{args.output_file_extension}"), mode="w"
-    ) as writer :
-        for index, row in lang_df.iterrows():
-            if pd.isnull(row[args.translation_row_index]):
-                question = ""
-                print(f"Question at row {index} is empty")
-            else:
-                question = row[args.translation_row_index]
-
-            if str(row[2]).strip().lower() == "no gold paragraph" or pd.isnull(row[2]):
-                answer = "[]"
-            else:
-                answer = f"['{row[2]}']"
-            
-            writer.write(question + "\t" + answer + "\n")
-            # json_writer.write({"id": index, "question": question, "answers": answer, "lang": args.lang, "split": args.split, "translation_type": args.translation_type})
+            json_writer.write({"id": index, "question": question, "translated_question": translated_question,
+                "answers": answer, "lang": args.lang, "split": args.split,
+                "translated_answer": translated_answer, "translation_type": args.translation_type})
 
 
 if __name__ == "__main__":

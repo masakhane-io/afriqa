@@ -112,3 +112,14 @@ What this script does is:
     ```
 - Evaluate the retriever and generates the top-10, top-20 and top-100 accuracy
 
+
+### Answer serialization compatibility
+
+The annotation converter retains string-valued `answers`/`translated_answer`
+fields, now encoded as JSON lists so apostrophes, quotes and Unicode round-trip.
+Native and pivot answers are handled independently. The TREC converter accepts
+JSON lists, existing list objects, legacy Python list literals, and CSV-quoted
+lists through a non-executing parser. Malformed or non-string answer lists
+raise a clear error. Empty answer lists are valid and contain no answer match.
+Run `python -m pytest -q tests/test_answer_parsing.py` from the repository root;
+the annotation conversion test needs pandas and jsonlines, not Pyserini/Java.

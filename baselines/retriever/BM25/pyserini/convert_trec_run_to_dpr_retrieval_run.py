@@ -15,6 +15,7 @@
 #
 
 import argparse
+from answer_parsing import parse_answers
 import json
 import os
 from tqdm import tqdm
@@ -55,16 +56,7 @@ if __name__ == '__main__':
             question_id, _, doc_id, _, score, _ = line.strip().split()
             question_id = int(question_id)
             question = qas[question_id]['title']
-            answers = qas[question_id]['answers']
-            if answers[0] == '"':
-                answers = answers[1:-1].replace('""', '"')
-
-            try:
-                answers = eval(answers)
-            except:
-                answers = list(answers)
-                answers[0], answers[-1] = "\"", "\""
-                answers = eval("".join(answers))
+            answers = parse_answers(qas[question_id]['answers'])
             try:
                 ctx = json.loads(searcher.doc(doc_id).raw())['contents']
             except:
